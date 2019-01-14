@@ -10,7 +10,7 @@
 .heading-badge h3{width:95px;text-align:center;margin-bottom:0!important;line-height:25px;font-size:12px;font-weight:400;padding-top:3px;padding-bottom:0}
 .heading-title,.heading-title-large{text-align:center;padding-bottom:10px}
 .heading-badge{margin-bottom:20px;border-width:3px!important}
-.heading-title{font-size:19px;font-weight:650!important}
+.heading-title{font-size:19px;font-weight:600!important}
 .heading-title-large{font-size:22px;font-weight:600!important}
 .heading-style p{width:90%!important}
 .heading-style .line{z-index:1;width:280px;display:block;height:1px;margin:25px auto}
@@ -75,3 +75,13 @@
 .footer-socials{width:300px}
 .footer-socials a{width:40px;height:40px;line-height:42px;text-align:center;border-radius:40px;float:left;margin-left:5px;margin-right:5px}
 .footer-strip{text-align:center;padding-top:20px;padding-bottom:50px}
+.header-icon-1,.header-icon-2{border-right:dashed 1px rgba(255,255,255,.1)}
+.header-icon-2,.header-icon-3{margin-top:-60px}
+.header-fixed{position:fixed;height:60px;top:0;left:0;right:0;line-height:60px;z-index:99;overflow:hidden;-webkit-box-shadow:0 0 5px 1px rgba(0,0,0,.1);box-shadow:0 0 5px 1px rgba(0,0,0,.1);background-color:#FFF}
+.header-search{position:absolute;z-index:9;background-color:#FFF;height:50px;width:100%;line-height:40px;-moz-transform:translateY(0);-webkit-transform:translateY(0);-o-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0);-webkit-box-shadow:0 1px 2px 1px rgba(0,0,0,.1);box-shadow:0 1px 2px 1px rgba(0,0,0,.1);-webkit-transition:all 250ms ease;-moz-transition:all 250ms ease;-ms-transition:all 250ms ease;-o-transition:all 250ms ease;transition:all 250ms ease}
+.header-search a{width:61px;height:50px;line-height:50px;text-align:center;position:absolute;right:0;top:0;color:#1f1f1f}
+.active-search{-moz-transform:translateY(60px);-webkit-transform:translateY(60px);-o-transform:translateY(60px);-ms-transform:translateY(60px);transform:translateY(60px);-webkit-transition:all 250ms ease;-moz-transition:all 250ms ease;-ms-transition:all 250ms ease;-o-transition:all 250ms ease;transition:all 250ms ease}
+.header-logo{font-family:roboto,sans-serif;width:135px;text-align:left!important;padding-left:20px;color:#fff;background-color:#2980b9;font-weight:800;letter-spacing:.5px;font-size:14px;text-transform:uppercase}
+.header-icon-1,.header-icon-2,.header-icon-3{float:right;width:60px;height:60px;line-height:60px;text-align:center;color:#000}
+.header-icon-1{margin-right:120px;border-left:dashed 1px rgba(255,255,255,.1)}
+.header-icon-2{margin-right:60px}
