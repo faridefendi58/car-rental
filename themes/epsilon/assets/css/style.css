@@ -1,5 +1,5 @@
 #page-content{position:fixed;left:0;top:0;bottom:0;right:0;z-index:1;overflow:hidden}
-#page-content-scroll{position:absolute;top:0;bottom:0;left:0;right:-19px;overflow:auto;-webkit-overflow-scrolling:touch}
+#page-content-scroll{position:absolute;top:60px;bottom:0;left:0;right:-19px;overflow:auto;-webkit-overflow-scrolling:touch}
 .triangle-subtitle,.triangle-title{z-index:99999;position:relative;padding-left:20px}
 .triangle-header{padding-bottom:11px;border-bottom:solid 1px rgba(0,0,0,.1);margin-bottom:30px}
 .triangle{width:100%;height:100px;background:#FFF;-webkit-clip-path:polygon(0 0,100% 60%,100% 100%,0 100%);clip-path:polygon(0 0,100% 60%,100% 100%,0 100%);margin-top:-100px;z-index:99999}
@@ -81,7 +81,7 @@
 .header-search{position:absolute;z-index:9;background-color:#FFF;height:50px;width:100%;line-height:40px;-moz-transform:translateY(0);-webkit-transform:translateY(0);-o-transform:translateY(0);-ms-transform:translateY(0);transform:translateY(0);-webkit-box-shadow:0 1px 2px 1px rgba(0,0,0,.1);box-shadow:0 1px 2px 1px rgba(0,0,0,.1);-webkit-transition:all 250ms ease;-moz-transition:all 250ms ease;-ms-transition:all 250ms ease;-o-transition:all 250ms ease;transition:all 250ms ease}
 .header-search a{width:61px;height:50px;line-height:50px;text-align:center;position:absolute;right:0;top:0;color:#1f1f1f}
 .active-search{-moz-transform:translateY(60px);-webkit-transform:translateY(60px);-o-transform:translateY(60px);-ms-transform:translateY(60px);transform:translateY(60px);-webkit-transition:all 250ms ease;-moz-transition:all 250ms ease;-ms-transition:all 250ms ease;-o-transition:all 250ms ease;transition:all 250ms ease}
-.header-logo{font-family:roboto,sans-serif;width:135px;text-align:left!important;padding-left:20px;color:#fff;background-color:#2980b9;font-weight:800;letter-spacing:.5px;font-size:14px;text-transform:uppercase}
+.header-logo{font-family:roboto,sans-serif;width:175px;text-align:left!important;padding-left:20px;color:#fff;background-color:#2980b9;font-weight:800;letter-spacing:.5px;font-size:14px;text-transform:uppercase}
 .header-icon-1,.header-icon-2,.header-icon-3{float:right;width:60px;height:60px;line-height:60px;text-align:center;color:#000}
 .header-icon-1{margin-right:120px;border-left:dashed 1px rgba(255,255,255,.1)}
 .header-icon-2{margin-right:60px}
