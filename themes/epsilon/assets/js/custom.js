@@ -37,7 +37,8 @@ $(document).ready(function () {
         });        
         
         $('.show-menu').click(function(){
-           $('.launchpad').toggleClass('show-launchpad'); 
+           //$('.launchpad').toggleClass('show-launchpad');
+           $('.open-left-sidebar').trigger("click");
         });
         
         //FastClick
