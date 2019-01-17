@@ -85,3 +85,17 @@
 .header-icon-1,.header-icon-2,.header-icon-3{float:right;width:60px;height:60px;line-height:60px;text-align:center;color:#000}
 .header-icon-1{margin-right:120px;border-left:dashed 1px rgba(255,255,255,.1)}
 .header-icon-2{margin-right:60px}
+.sidebar-left{overflow:hidden;left:0;-webkit-overflow-scrolling:touch;background-color:#2980b9;position:fixed;z-index:9999999;top:0;bottom:0;color:#fff}
+.active-sidebar-box{-moz-transform:translateX(0)!important;-webkit-transform:translateX(0)!important;-o-transform:translateX(0)!important;-ms-transform:translateX(0)!important;transform:translateX(0)!important}
+.sidebar-tap-close{position:fixed;z-index:999999;width:100%;height:100%;opacity:0;-moz-transform:scale(0,0);-webkit-transform:scale(0,0);-o-transform:scale(0,0);-ms-transform:scale(0,0);transform:scale(0,0)}
+.sidebar-left .menu-item{font-size:13px;line-height:60px;padding-left:60px;font-weight:400;color:#fff;border-bottom:solid 1px rgba(255,255,255,.2);border-top:solid 1px rgba(255,255,255,.05)}
+.left-sidebar-header h3,.sidebar-divider{margin-bottom:0;padding-left:20px;text-transform:uppercase}
+.left-sidebar-header h3{float:left;font-family:Roboto,sans-serif;width:142px;height:60px;line-height:60px;text-align:left;color:#FFF;font-weight:800;letter-spacing:.5px;font-size:12px}
+.left-sidebar-header a,.sidebar-left .menu-item i:first-child,.sidebar-left .sidebar-header a{text-align:center;line-height:60px;height:60px}
+.left-sidebar-header a{float:right;width:56px;color:#1f1f1f;border-left:dashed 1px rgba(255,255,255,.05)}
+.sidebar-left .sidebar-header a{width:54px;color:#fff}
+.sidebar-left,.sidebar-left .submenu,.sidebar-left-fix{-webkit-transition:all 250ms ease;-moz-transition:all 250ms ease;-ms-transition:all 250ms ease;-o-transition:all 250ms ease;transition:all 250ms ease}
+.sidebar-divider{padding-bottom:0;padding-top:0;font-size:10px;font-weight:500;border-top:solid 1px rgba(255,255,255,.5);border-bottom:solid 1px rgba(255,255,255,.5);-webkit-box-shadow:0 0 0 1px rgba(255,255,255,.03);box-shadow:0 0 0 1px rgba(255,255,255,.03);background-color:#49b3e8}
+.sidebar-left .menu-item i:first-child{color:rgba(255,255,255,.8)!important;position:absolute;font-size:18px;font-weight:200!important;width:20px;left:20px;border-radius:0;margin-top:0;border:none}
+.sidebar-left .sidebar-scroll{position:absolute;top:0;bottom:0;left:0;right:0;overflow:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch}
+.sidebar-left .menu-item .fa-circle{opacity:.4;font-size:6px;position:absolute;right:27px;height:60px;line-height:63px}
