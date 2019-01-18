@@ -96,4 +96,42 @@ class Tool
 
         return $results;
     }
+
+    public function getConfigs($option_name = null) {
+        if (!file_exists(realpath(dirname(__DIR__)).'/data/configs.json'))
+            return [];
+
+        $content = file_get_contents(realpath(dirname(__DIR__)).'/data/configs.json');
+        $cfgs = json_decode($content, true);
+
+        if (!empty($option_name)) {
+            if (is_array($cfgs) && array_key_exists($option_name, $cfgs)){
+                return $cfgs[$option_name];
+            } else {
+                return null;
+            }
+        }
+
+        return $cfgs;
+    }
+
+    public function translate($text) {
+        $current_lang = self::getConfigs('language');
+        $lang = 'en';
+        if (!empty($current_lang)) {
+            $lang = $current_lang;
+        }
+
+        if (!file_exists(realpath(dirname(__DIR__)).'/data/trans_'.$lang.'.json'))
+            return $text;
+
+        $content = file_get_contents(realpath(dirname(__DIR__)).'/data/trans_'.$lang.'.json');
+        $translations = json_decode($content, true);
+
+        if (is_array($translations) && array_key_exists($text, $translations)){
+            return $translations[$text];
+        }
+
+        return $text;
+    }
 }

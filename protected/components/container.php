@@ -11,7 +11,6 @@ $client = null;
 if (!empty($settings['settings']['params']['extensions'])) {
     $exts = json_decode($settings['settings']['params']['extensions'], true);
     if (is_array($exts) && in_array('client', $exts)) {
-        $client = new \Extensions\Components\ClientIdentity($app);
     }
 }
 

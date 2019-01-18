@@ -23,6 +23,36 @@ $app->get('/sitemap.xml', function ($request, $response, $args) {
     return $response->withHeader('Content-Type','text/xml');
 });
 
+$app->get('/lang/[{name}]', function ($request, $response, $args) use ($settings) {
+    if (!empty($args['name'])) {
+        $model = \Model\OptionsModel::model()->findByAttributes(['option_name' => 'language']);
+        if ($model instanceof \RedBeanPHP\OODBBean) {
+            $model->option_value = $args['name'];
+            $model->updated_at = date("Y-m-d H:i:s");
+            $update = \Model\OptionsModel::model()->update($model);
+        } else {
+            $model = new \Model\OptionsModel();
+            $model->option_name = 'language';
+            $model->option_value = $args['name'];
+            $model->option_description = 'Language params';
+            $model->autoload = 'yes';
+            $model->created_at = date("Y-m-d H:i:s");
+            $model->updated_at = date("Y-m-d H:i:s");
+            $save = \Model\OptionsModel::model()->save($model);
+        }
+
+        try {
+            $hooks = new \PanelAdmin\Components\AdminHooks($settings);
+            $omodel = new \Model\OptionsModel();
+            $hooks->onAfterParamsSaved($omodel->getOptions());
+        } catch (Exception $e) {
+            //var_dump($e->getMessage()); exit;
+        }
+    }
+
+    return $response->withRedirect( '/' );
+});
+
 $app->get('/[{name}]', function ($request, $response, $args) {
     
 	if (empty($args['name']))
