@@ -22,6 +22,21 @@
         </li>
         <li>
             <a href="#">
+                <span class="ion-social-rss"></span>
+                <span class="nav_title">Blog</span>
+            </a>
+            <div class="sub_panel">
+                <div class="side_inner">
+                    <h4 class="panel_heading panel_heading_first">Blog</h4>
+                    <ul>
+                        <li><a href="{{ 'blog/posts/view' | link }}"><span class="side_icon ion-ios7-folder-outline"></span>Daftar Postingan</a></li>
+                        <li><a href="{{ 'blog/posts/create' | link }}"><span class="side_icon ion-ios7-plus-outline"></span> Tambah Baru</a></li>
+                    </ul>
+                </div>
+            </div>
+        </li>
+        <li>
+            <a href="#">
                 <span class="ion-monitor"></span>
                 <span class="nav_title">Tampilan</span>
             </a>
@@ -30,6 +45,7 @@
                     <h4 class="panel_heading panel_heading_first">Tampilan</h4>
                     <ul>
                         <li><a href="{{ 'themes/view' | alink }}"><span class="side_icon ion-ios7-folder-outline"></span> Tema</a></li>
+                        <li><a href="{{ 'slides/view' | link }}"><span class="side_icon ion-ios7-folder-outline"></span> Slide Show</a></li>
                     </ul>
                 </div>
             </div>

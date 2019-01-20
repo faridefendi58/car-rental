@@ -333,7 +333,24 @@ data_table = {
 	init: function() {
 		if( $('.dataTable').length ) {
 			$(function () {
-				$('.dataTable').dataTable();
+				$('.dataTable').each(function () {
+					var body_tr = $(this).find('tbody').find('tr.no-data');
+					if (body_tr.length <= 0) {
+						var attr_sort = $(this).attr('attr-sort');
+						if (typeof attr_sort !== typeof undefined && attr_sort !== false) {
+							var attr_sort_type = $(this).attr('attr-sort-type');
+							if (typeof attr_sort_type !== typeof undefined && attr_sort_type !== false) {
+								var attr_sort_type = 'desc';
+							}
+							$(this).dataTable( {
+								"order": [[ attr_sort, attr_sort_type ]]
+							});
+						} else {
+							$(this).dataTable();
+						}
+					}
+				});
+
 			})
 		}
 	}
