@@ -1,0 +1,78 @@
+{% extends "layout.html" %}
+{% block pagetitle %}
+Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
+{% endblock %}
+
+{% block content %}
+<div id="main_wrapper">
+    <div class="page_bar clearfix">
+        <div class="row">
+            <div class="col-sm-10">
+                <h1 class="page_title">Ubah Kategori Produk</h1>
+                <p class="text-muted">Formulir ubah kategori {{ model.title }}</p>
+            </div>
+            <div class="col-sm-2 text-right">
+                <a class="btn btn-default" href="{{ 'products/category/view' | link }}">Daftar Kategori Produk</a>
+            </div>
+        </div>
+    </div>
+    <div class="page_content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Kolom bertanda <span class="red">*</span> tidak boleh dikosongi
+                        </div>
+                        <div class="panel-body">
+                            {% if message %}
+                            <div class="alert {% if success %}alert-success{% else %}alert-warning{% endif %}">{{ message }}</div>
+                            {% endif %}
+                            <form method="post" name="slide-create" enctype="multipart/form-data">
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Title <span class="red">*</span></label>
+                                        <input type="text" name="ProductCategory[title]" class="form-control"
+                                               placeholder="Name of the category" value="{{ model.title }}">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Image</label>
+                                        <img src="{{ model.image | link }}" class="img-responsive img-thumbnail mb10"/>
+                                        <input type="file" name="ProductCategory[image]" class="">
+                                    </div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div class="form-group">
+                                        <label>Description</label>
+                                        <textarea class="form-control editor" name="ProductCategory[description]">{% if model.description %}{{ model.description }}{% endif %}</textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-sm-12">
+                                    <input type="submit" name="Submit" value="Update" class="btn btn-success btn-submit">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'partial/right_menu.html' %}
+{% endblock %}
+{% block endbodyjs %}
+<script src="{{ 'js/bootstrap-fileupload.min.js' | admin_asset_url }}"></script>
+<script type="text/javascript" src="{{ 'lib/tinymce/tinymce.min.js' | admin_asset_url }}"></script>
+<script type="text/javascript">
+    $(function(){
+        var success_message = "{{ message }}";
+        var id = parseInt("{{ id }}");
+        if (success_message && success_message.length > 0 && id > 0) {
+            setTimeout(function () {
+                window.location.href = "{{ 'products/category/update' | link }}/{{ id }}";
+            }, 2000);
+        }
+    });
+</script>
+{% endblock %}
