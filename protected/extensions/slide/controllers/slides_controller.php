@@ -214,12 +214,16 @@ class SlidesController extends BaseController
             return false;
         }
 
-        $model = \ExtensionsModel\PostModel::model()->findByPk($args['id']);
-        $delete = \ExtensionsModel\PostModel::model()->delete($model);
+        $model = \ExtensionsModel\SlideShowModel::model()->findByPk($args['id']);
+        $image_file = $model->image;
+        $delete = \ExtensionsModel\SlideShowModel::model()->delete($model);
         if ($delete) {
-            $delete2 = \ExtensionsModel\PostContentModel::model()->deleteAllByAttributes(['post_id'=>$args['id']]);
-            $delete3 = \ExtensionsModel\PostInCategoryModel::model()->deleteAllByAttributes(['post_id'=>$args['id']]);
-            $message = 'Your page is successfully created.';
+            if (!empty($image_file)) {
+                try {
+                    unlink($image_file);
+                } catch (Exception $e) {}
+            }
+            $message = 'Your slide has been successfully deleted.';
             echo true;
         }
     }

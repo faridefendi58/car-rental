@@ -266,7 +266,7 @@ class PostsController extends BaseController
         if ($delete) {
             $delete2 = \ExtensionsModel\PostContentModel::model()->deleteAllByAttributes(['post_id'=>$args['id']]);
             $delete3 = \ExtensionsModel\PostInCategoryModel::model()->deleteAllByAttributes(['post_id'=>$args['id']]);
-            $message = 'Your page is successfully created.';
+            $message = 'Your post has been successfully deleted.';
             echo true;
         }
     }
