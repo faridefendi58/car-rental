@@ -20,7 +20,7 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
     <div class="page_content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
                         <div class="panel-heading">
                             Kolom bertanda <span class="red">*</span> tidak boleh dikosongi
@@ -30,50 +30,83 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                             <div class="alert {% if success %}alert-success{% else %}alert-warning{% endif %}">{{ message }}</div>
                             {% endif %}
                             <form method="post" name="product-create">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Title <span class="red">*</span></label>
-                                        <input type="text" name="Product[title]" class="form-control"
-                                               placeholder="Name of the category" value="{{ model.title }}">
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Category <span class="red">*</span></label>
-                                        <select name="Product[category_id]" class="form-control">
-                                            {% for category in categories %}
-                                            <option value="{{ category.id }}" {% if data.category_id == category.id %}selected="selected"{% endif %}>{{ category.title }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label>Status <span class="red">*</span></label>
-                                        <select name="Product[status]" class="form-control">
-                                            {% set statuses = {'disabled':'Disabled', 'enabled':'Enabled'} %}
-                                            {% for status, sname in statuses %}
-                                            <option value="{{ status }}" {% if data.status == status %}selected="selected"{% endif %}>{{ sname }}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
+                                <div class="form-group">
+                                    <label>Nama Produk <span class="red">*</span></label>
+                                    <input type="text" name="Product[title]" class="form-control"
+                                           placeholder="Name of the category" value="{{ model.title }}">
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <label>Description</label>
-                                        <textarea class="form-control editor" name="Product[description]">{% if model.description %}{{ model.description }}{% endif %}</textarea>
-                                    </div>
+                                <div class="form-group">
+                                    <label>Kategori <span class="red">*</span></label>
+                                    <select name="Product[category_id]" class="form-control">
+                                        {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if model.category_id == category.id %}selected="selected"{% endif %}>{{ category.title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Status <span class="red">*</span></label>
+                                    <select name="Product[status]" class="form-control">
+                                        {% set statuses = {'disabled':'Disabled', 'enabled':'Enabled'} %}
+                                        {% for status, sname in statuses %}
+                                        <option value="{{ status }}" {% if model.status == status %}selected="selected"{% endif %}>{{ sname }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control editor" name="Product[description]">{% if model.description %}{{ model.description }}{% endif %}</textarea>
                                 </div>
 
-                                <div class="form-group col-sm-12">
+                                <div class="form-group">
                                     <input type="submit" name="Submit" value="Update" class="btn btn-success btn-submit">
                                 </div>
                             </form>
                         </div>
                     </div>
                 </div>
+
+
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Daftar Foto Produk</div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i, image in images %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ image.upload_folder | link }}/{{ image.file_name }}" height="70px"/><br/>
+                                        {{ image.alt }}
+                                    </td>
+                                    <td>{{ image.description | default('-') }}</td>
+                                    <td>{{ image.type }}</td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="deleteImage(this);" attr-id="{{ image.id }}">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
+            <div class="mb20"></div>
 
             <div class="row">
                 <div class="col-lg-6">
                     <div class="panel panel-default">
-                        <div class="panel-heading">Add More Images</div>
+                        <div class="panel-heading">Penambahan Foto</div>
                         <div class="panel-body">
                             <div class="alert" id="upload-alert" style="display: none;"></div>
                             <form class="form-bordered" id="image-form" action="{{ 'products/default/upload-images' | link }}">
@@ -130,37 +163,14 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                         </div>
                     </div>
                 </div>
+                <!-- list price -->
                 <div class="col-lg-6">
                     <div class="panel panel-default">
-                        <div class="panel-heading">List Images</div>
+                        <div class="panel-heading">
+                            Pricing
+                        </div>
                         <div class="panel-body">
-                            <table class="table">
-                                <thead>
-                                <tr>
-                                    <th>File Name</th>
-                                    <th>Description</th>
-                                    <th>Type</th>
-                                    <th>&nbsp;</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {% for i, image in images %}
-                                <tr>
-                                    <td>
-                                        <img src="{{ image.upload_folder | link }}/{{ image.file_name }}" height="70px"/><br/>
-                                        {{ image.alt }}
-                                    </td>
-                                    <td>{{ image.description | default('-') }}</td>
-                                    <td>{{ image.type }}</td>
-                                    <td>
-                                        <a href="javascript:void(0);" onclick="deleteImage(this);" attr-id="{{ image.id }}">
-                                            <i class="fa fa-trash-o"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                                </tbody>
-                            </table>
+                            {% include 'products/_price.html' with {'model':model, 'prices':prices} %}
                         </div>
                     </div>
                 </div>

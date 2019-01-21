@@ -1,0 +1,137 @@
+<form method="post" id="product-prices-form" class="mt20" action="{{ 'products/default/create-price' | link }}/{{ model.id }}">
+    <div class="alert alert-success" style="display: none;"></div>
+    {% for i, price in prices %}
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-10">
+                <div class="form-group">
+                    <label for="title">Nama Harga <span class="required">*</span></label>
+                    <input type="text" id="title" name="ProductPrices[title][]" class="form-control" value="{{ price.title }}" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="price">Harga Dasar<span class="required">*</span></label>
+                    <input type="text" id="price" name="ProductPrices[unit_price][]" class="form-control" value="{{ price.unit_price }}" required>
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="disc">Harga Diskon</label>
+                    <input type="text" id="disc" name="ProductPrices[discount][]" class="form-control" value="{{ price.discount }}">
+                </div>
+                <div class="form-group col-md-4">
+                    <label for="period">Durasi<span class="required">*</span></label>
+                    {% set periods = App.call.model("\\ExtensionsModel\\ProductModel", 'getPeriods') %}
+                    <select name="ProductPrices[period][]" class="form-control" id="period">
+                        {% for period_id, period in periods %}
+                        <option value="{{ period_id }}" {% if price.period == period_id %}selected="selected"{% endif %}>{{ period }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <label>&nbsp;</label>
+                    <a href="javascript:void(0);" onclick="removeprice(this, true);" attr-id="{{ price.id }}" title="Hapus price ini" class="rm-button">
+                        <i class="fa fa-trash-o fa-2x"></i>
+                    </a>
+                    <a href="javascript:void(0);"
+                       onclick="addItem(this, false);"
+                       {% if prices | length > 1 and i == 1 %}style="display: none;"{% endif %}>
+                        <i class="fa fa-plus fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+            <input type="hidden" name="ProductPrices[id][]" value="{{ price.id }}">
+        </div>
+    </div>
+    {% endfor %}
+    <div class="col-md-12" id="price-form">
+        {% if prices | length <= 0 %}
+        {% include 'products/_price_form.html' with {'model':model} %}
+        {% endif %}
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <input name="ProductPrices[product_id]" type="hidden" value="{{ model.id }}">
+            <input type="submit" value="Simpan" class="btn btn-info">
+        </div>
+    </div>
+</form>
+
+<style>
+    .row + .row {margin-top: 0px;}
+</style>
+<script src="{{ 'js/jquery.min.js' | admin_asset_url }}"></script>
+<script type="text/javascript">
+    function removeprice(dt, execute) {
+        var tot_data = parseInt("{{ prices | length }}");
+        if ($(dt).parent().find('.fa-plus').parent().is(':visible') && tot_data <=1) {
+            alert('Harga ini tidak dapat dihapus!.');
+        } else {
+            if (confirm('Anda yakin ingin menghapus harga ini?')) {
+                if (execute) {
+                    $.ajax({
+                        'url': '{{ "products/default/delete-price" | link }}/'+$(dt).attr('attr-id'),
+                        'type':'post',
+                        'data':{'id':$(dt).attr('attr-id')},
+                        'success': function(data) {
+                            console.log(data);
+                            if (data.status == 'success') {
+                                $(dt).parent().parent().parent().remove();
+                                $('.rm-button').prev().show();
+                            }
+                        },
+                        error: function(XMLHttpRequest, textStatus, errorThrown) {
+                            console.log("Status: " + textStatus + " Message: "+errorThrown);
+                        }
+                    });
+                } else {
+                    $(dt).parent().parent().parent().remove();
+                    $('.rm-button').prev().show();
+                }
+            }
+        }
+        return false;
+    }
+    function addItem(dt, hide) {
+        $.ajax({
+            'url': '{{ "products/default/create-price" | link }}/{{ model.id }}',
+            'type':'get',
+            'success': function(data) {
+                console.log(data);
+                $('#price-form').append(data);
+                $(dt).hide();
+                if (hide) {
+                    $(dt).parent().find('.fa-trash-o').parent().show();
+                }
+            },
+            error: function(XMLHttpRequest, textStatus, errorThrown) {
+                console.log("Status: " + textStatus + " Message: "+errorThrown);
+            }
+        });
+    }
+    $(function () {
+        $('#product-prices-form').submit(function () {
+            var url = $(this).attr('action');
+            $.ajax({
+                'url': url,
+                'type':'post',
+                'data': $('#product-prices-form').serialize(),
+                'success': function(data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                        var alert_success = $('#product-prices-form').find('.alert-success');
+                        alert_success.html(data.message);
+                        alert_success.show();
+                        setTimeout(function () {
+                            window.location.reload(true);
+                        }, 5000);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Message: "+errorThrown);
+                }
+            });
+
+            return false;
+        });
+    });
+</script>

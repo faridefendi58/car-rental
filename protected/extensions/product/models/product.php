@@ -47,4 +47,14 @@ class ProductModel extends \Model\BaseModel
         $rows = \Model\R::getAll( $sql, $params );
         return $rows;
     }
+
+    public function getPeriods()
+    {
+        return [
+            '6H' => '6 Jam',
+            '12H' => '12 Jam',
+            '18H' => '18 Jam',
+            '24H' => '24 Jam',
+            ];
+    }
 }

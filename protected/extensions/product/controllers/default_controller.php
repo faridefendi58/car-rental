@@ -20,6 +20,8 @@ class ProductDefaultController extends BaseController
         $app->map(['POST'], '/delete/[{id}]', [$this, 'delete']);
         $app->map(['POST'], '/upload-images', [$this, 'get_upload_images']);
         $app->map(['POST'], '/delete-image/[{id}]', [$this, 'delete_image']);
+        $app->map(['GET', 'POST'], '/create-price/[{id}]', [$this, 'create_price']);
+        $app->map(['POST'], '/delete-price/[{id}]', [$this, 'delete_price']);
     }
 
     public function accessRules()
@@ -121,6 +123,7 @@ class ProductDefaultController extends BaseController
         $pmodel = new \ExtensionsModel\ProductModel();
         $model = \ExtensionsModel\ProductModel::model()->findByPk($args['id']);
         $categories = \ExtensionsModel\ProductCategoryModel::model()->findAll();
+        $prices = \ExtensionsModel\ProductPricesModel::model()->findAllByAttributes(['product_id' => $model->id]);
 
         $success = false; $errors = []; $data = [];
         if (isset($_POST['Product'])){
@@ -160,7 +163,8 @@ class ProductDefaultController extends BaseController
             'id' => $model->id,
             'model' => $model,
             'productImages' => $productImages,
-            'images' => $images
+            'images' => $images,
+            'prices' => $prices
         ]);
     }
 
@@ -252,5 +256,89 @@ class ProductDefaultController extends BaseController
             echo true;
         }
         exit;
+    }
+
+    public function create_price($request, $response, $args)
+    {
+        $isAllowed = $this->isAllowed($request, $response, $args);
+        if ($isAllowed instanceof \Slim\Http\Response)
+            return $isAllowed;
+
+        if(!$isAllowed){
+            return $this->notAllowedAction();
+        }
+
+        $model = \ExtensionsModel\ProductModel::model()->findByPk($args['id']);
+
+        if (isset($_POST['ProductPrices']) && !empty($_POST['ProductPrices']['product_id'])) {
+            foreach ($_POST['ProductPrices']['title'] as $i => $title) {
+                if (empty($_POST['ProductPrices']['id'][$i])) {
+                    $model[$i] = new \ExtensionsModel\ProductPricesModel();
+                    $model[$i]->title = $_POST['ProductPrices']['title'][$i];
+                    $model[$i]->product_id = $_POST['ProductPrices']['product_id'];
+                    $model[$i]->unit_price = $_POST['ProductPrices']['unit_price'][$i];
+                    $model[$i]->discount = $_POST['ProductPrices']['discount'][$i];
+                    $model[$i]->period = $_POST['ProductPrices']['period'][$i];
+                    $model[$i]->created_at = date("Y-m-d H:i:s");
+                    $model[$i]->updated_at = date("Y-m-d H:i:s");
+                    if (!empty($model[$i]->title) && $model[$i]->unit_price > 0) {
+                        $save = \ExtensionsModel\ProductPricesModel::model()->save($model[$i]);
+                    }
+                } else {
+                    $pmodel[$i] = \ExtensionsModel\ProductPricesModel::model()->findByPk($_POST['ProductPrices']['id'][$i]);
+                    $pmodel[$i]->unit_price = $_POST['ProductPrices']['unit_price'][$i];
+                    $pmodel[$i]->discount = $_POST['ProductPrices']['discount'][$i];
+                    $pmodel[$i]->period = $_POST['ProductPrices']['period'][$i];
+                    $pmodel[$i]->updated_at = date("Y-m-d H:i:s");
+                    if (!empty($pmodel[$i]->title) && $pmodel[$i]->unit_price > 0) {
+                        try {
+                            $update = \ExtensionsModel\ProductPricesModel::model()->update($pmodel[$i]);
+
+                        } catch (\Exception $e) {
+                            var_dump($e->getMessage()); exit;
+                        }
+                    }
+                }
+            }
+
+            return $response->withJson(
+                [
+                    'status' => 'success',
+                    'message' => 'Data berhasil disimpan.',
+                ], 201);
+        }
+
+        return $this->_container->module->render(
+            $response,
+            'products/_price_form.html',
+            [
+                'show_delete_btn' => true,
+                'model' => $model
+            ]);
+    }
+
+    public function delete_price($request, $response, $args)
+    {
+        $isAllowed = $this->isAllowed($request, $response, $args);
+        if ($isAllowed instanceof \Slim\Http\Response)
+            return $isAllowed;
+
+        if(!$isAllowed){
+            return $this->notAllowedAction();
+        }
+
+        if (!isset($args['id'])) {
+            return false;
+        }
+
+        $model = \ExtensionsModel\ProductPricesModel::model()->findByPk($_POST['id']);
+        $delete = \ExtensionsModel\ProductPricesModel::model()->delete($model);
+        if ($delete) {
+            return $response->withJson(
+                [
+                    'status' => 'success',
+                    'message' => 'Data berhasil dihapus.',
+                ], 201);
+        }
     }
 }
