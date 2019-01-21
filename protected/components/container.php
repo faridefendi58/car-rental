@@ -187,7 +187,8 @@ function addGlobal($env, $c, $user = null)
         'optionModel' => new \Model\OptionsModel(),
         'request' => $c['request'],
         'currentPath' => $base_path,
-        'tool' => new \Components\Tool($setting['theme']['path'].'/'.$setting['theme']['name'].'/')
+        'tool' => new \Components\Tool($setting['theme']['path'].'/'.$setting['theme']['name'].'/'),
+        'call' => new \Components\CStatic($c, $user)
     ];
 
     $env->addGlobal('App', $globals);

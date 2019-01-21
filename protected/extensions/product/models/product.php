@@ -3,7 +3,7 @@ namespace ExtensionsModel;
 
 require_once __DIR__ . '/../../../models/base.php';
 
-class ProductCategoryModel extends \Model\BaseModel
+class ProductModel extends \Model\BaseModel
 {
     public static function model($className=__CLASS__)
     {
@@ -12,7 +12,7 @@ class ProductCategoryModel extends \Model\BaseModel
 
     public function tableName()
     {
-        return 'ext_product_category';
+        return 'ext_product';
     }
 
     /**
@@ -25,18 +25,5 @@ class ProductCategoryModel extends \Model\BaseModel
         return [
             ['title', 'required'],
         ];
-    }
-
-    public function getItem($data) {
-        if (empty($data['id'])) {
-            return false;
-        }
-
-        $model = self::model()->findByPk($data['id']);
-        if ($model instanceof \RedBeanPHP\OODBBean) {
-            return $model;
-        }
-
-        return false;
     }
 }

@@ -37,7 +37,7 @@ Daftar Kategori Produk - {{ App.params.site_name }}
                                     <tbody>
                                     {% for i, data in datas %}
                                     <tr>
-                                        <td>{{ i + 1 }}</td>
+                                        <td>{{ i }}</td>
                                         <td>{{ data.title }}</td>
                                         <td><img src="{{ data.image | link }}" class="img-thumbnail" style="width: 100px;"/></td>
                                         <td>

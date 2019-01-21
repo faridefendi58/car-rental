@@ -17,6 +17,9 @@ $app->group('/products', function () use ($user) {
     $this->group('/category', function() use ($user) {
         new Extensions\Controllers\ProductCategoryController($this, $user);
     });
+    $this->group('/default', function() use ($user) {
+        new Extensions\Controllers\ProductDefaultController($this, $user);
+    });
 });
 
 ?>
