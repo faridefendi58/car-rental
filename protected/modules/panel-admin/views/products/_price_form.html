@@ -14,7 +14,7 @@
         </div>
         <div class="form-group col-md-4">
             <label for="period">Durasi<span class="required">*</span></label>
-            {% set periods = App.call.model("\\ExtensionsModel\\ProductModel", 'getPeriods') %}
+            {% set periods = App.call.model("\\ExtensionsModel\\ProductModel", 'getPeriods', {}) %}
             <select name="ProductPrices[period][]" class="form-control" id="period">
                 {% for period_id, period in periods %}
                 <option value="{{ period_id }}">{{ period }}</option>
