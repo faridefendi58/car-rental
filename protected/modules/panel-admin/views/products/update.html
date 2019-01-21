@@ -192,7 +192,7 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                 type: 'POST',
                 data: formData,
                 dataType: 'json',
-                async: false,
+                async: true,
                 success: function (data) {
                     console.log(data);
                     var alert_area = $('#upload-alert');
