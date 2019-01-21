@@ -4,6 +4,7 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
 {% endblock %}
 
 {% block content %}
+<link rel="stylesheet" href="{{ 'css/bootstrap-fileupload.min.css' | admin_asset_url }}" />
 <div id="main_wrapper">
     <div class="page_bar clearfix">
         <div class="row">
@@ -68,6 +69,102 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Add More Images</div>
+                        <div class="panel-body">
+                            <div class="alert" id="upload-alert" style="display: none;"></div>
+                            <form class="form-bordered" id="image-form" action="{{ 'products/default/upload-images' | link }}">
+                                <div class="form-group">
+                                    <label class="control-label">Images</label>
+                                    <div class="fileupload fileupload-new" data-provides="fileupload">
+                                        <div class="input-append">
+                                            <div class="uneditable-input">
+                                                <i class="glyphicon glyphicon-file fileupload-exists"></i>
+                                                <span class="fileupload-preview"></span>
+                                            </div>
+                                            <span class="btn btn-default btn-file">
+											  <span class="fileupload-new">Select file</span>
+											  <span class="fileupload-exists">Change</span>
+											  <input type="file" name="ProductImages[file_name]"/>
+											</span>
+                                            <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">Remove</a>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">Image Alt</label>
+                                    <input type="text" name="ProductImages[alt]" class="form-control"/>
+                                    <span class="help-block">Type the title of the image file</span>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Type</label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="ProductImages[type]" id="optionsRadios1" value="open_graft" checked="checked"> Open Graft
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="ProductImages[type]" id="optionsRadios2" value="ilustration"> Ilustration
+                                    </label>
+                                    <label class="radio-inline">
+                                        <input type="radio" name="ProductImages[type]" id="optionsRadios3" value="other"> Other
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">Image Description</label>
+                                    <textarea name="ProductImages[description]" class="form-control"></textarea>
+                                    <span class="help-block">Type the short description of the image file</span>
+                                </div>
+                                <input type="hidden" name="ProductImages[product_id]" value="{{ model.id }}">
+                            </form>
+                        </div>
+                        <div class="panel-footer">
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <button class="btn btn-primary" id="submit-image-form">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">List Images</div>
+                        <div class="panel-body">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>File Name</th>
+                                    <th>Description</th>
+                                    <th>Type</th>
+                                    <th>&nbsp;</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for i, image in images %}
+                                <tr>
+                                    <td>
+                                        <img src="{{ image.upload_folder | link }}/{{ image.file_name }}" height="70px"/><br/>
+                                        {{ image.alt }}
+                                    </td>
+                                    <td>{{ image.description | default('-') }}</td>
+                                    <td>{{ image.type }}</td>
+                                    <td>
+                                        <a href="javascript:void(0);" onclick="deleteImage(this);" attr-id="{{ image.id }}">
+                                            <i class="fa fa-trash-o"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -85,6 +182,59 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                 window.location.href = "{{ 'products/default/update' | link }}/{{ id }}";
             }, 2000);
         }
+
+        $("#submit-image-form").click(function(){
+            var formData = new FormData($('form[id="image-form"]')[0]);
+            $.ajax({
+                //beforeSend: function() { Loading.show(); },
+                //complete: function() { Loading.hide(); },
+                url: $('form[id="image-form"]').attr('action'),
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    console.log(data);
+                    var alert_area = $('#upload-alert');
+                    if (data.status == 'success') {
+                        alert_area.html(data.message);
+                        alert_area.addClass('alert-success');
+                        alert_area.removeClass('alert-warning');
+                        alert_area.show();
+                        setTimeout(function () {
+                            window.location.reload(true);
+                        }, 3000);
+                    } else {
+                        alert_area.html(data.message);
+                        alert_area.addClass('alert-warning');
+                        alert_area.removeClass('alert-success');
+                        alert_area.show();
+                    }
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+            return false;
+        });
     });
+
+    function deleteImage(data) {
+        var $this = $(data);
+        if (confirm('Are you sure you want to delete this?')) {
+            $.ajax({
+                'beforeSend': function() {  },
+                'complete': function() {  },
+                'url': "{{ 'products/default/delete-image' | link }}/"+$this.attr('attr-id'),
+                'type':'post',
+                'data':{'id':$this.attr('attr-id')},
+                'success': function(data) {
+                    console.log(data);
+                    $this.parent().parent().remove();
+                }
+            });
+        }
+        return false;
+    }
 </script>
 {% endblock %}

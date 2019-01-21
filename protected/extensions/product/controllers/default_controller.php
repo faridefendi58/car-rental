@@ -18,6 +18,8 @@ class ProductDefaultController extends BaseController
         $app->map(['GET', 'POST'], '/create', [$this, 'create']);
         $app->map(['GET', 'POST'], '/update/[{id}]', [$this, 'update']);
         $app->map(['POST'], '/delete/[{id}]', [$this, 'delete']);
+        $app->map(['POST'], '/upload-images', [$this, 'get_upload_images']);
+        $app->map(['POST'], '/delete-image/[{id}]', [$this, 'delete_image']);
     }
 
     public function accessRules()
@@ -116,6 +118,7 @@ class ProductDefaultController extends BaseController
         if (empty($args['id']))
             return false;
 
+        $pmodel = new \ExtensionsModel\ProductModel();
         $model = \ExtensionsModel\ProductModel::model()->findByPk($args['id']);
         $categories = \ExtensionsModel\ProductCategoryModel::model()->findAll();
 
@@ -147,12 +150,17 @@ class ProductDefaultController extends BaseController
             }
         }
 
+        $productImages = new \ExtensionsModel\ProductImagesModel();
+        $images = $pmodel->getImages(['id' => $model->id]);
+
         return $this->_container->module->render($response, 'products/update.html', [
             'categories' => $categories,
             'message' => ($message) ? $message : null,
             'success' => $success,
             'id' => $model->id,
-            'model' => $model
+            'model' => $model,
+            'productImages' => $productImages,
+            'images' => $images
         ]);
     }
 
@@ -173,8 +181,76 @@ class ProductDefaultController extends BaseController
         $model = \ExtensionsModel\ProductModel::model()->findByPk($args['id']);
         $delete = \ExtensionsModel\ProductModel::model()->delete($model);
         if ($delete) {
+            $images = \ExtensionsModel\ProductImagesModel::model()->findAllByAttributes(['product_id' => $args['id']]);
+            if (count($images) > 0) {
+                foreach ($images as $image) {
+                    $path = $this->_settings['basePath'].'/../'.$image->upload_folder.'/'.$image->file_name;
+                    $delete = \ExtensionsModel\ProductImagesModel::model()->delete($image);
+                    if ($delete) {
+                        if (file_exists($path))
+                            unlink($path);
+                    }
+                }
+            }
             $message = 'Your data has been successfully deleted.';
             echo true;
         }
+    }
+
+    public function get_upload_images($request, $response, $args)
+    {
+        if ($this->_user->isGuest()){
+            return $response->withRedirect($this->_login_url);
+        }
+
+        if (isset($_POST['ProductImages'])) {
+            $path_info = pathinfo($_FILES['ProductImages']['name']['file_name']);
+            if (!in_array($path_info['extension'], ['jpg','JPG','jpeg','JPEG','png','PNG'])) {
+                echo json_encode(['status'=>'failed','message'=>'Allowed file type are jpg, png']); exit;
+                exit;
+            }
+            $model = new \ExtensionsModel\ProductImagesModel();
+            $model->product_id = $_POST['ProductImages']['product_id'];
+            $model->type = $_POST['ProductImages']['type'];
+            $model->upload_folder = 'uploads/images/products';
+            $model->file_name = time().'.'.$path_info['extension'];
+            $model->alt = $_POST['ProductImages']['alt'];
+            $model->description = $_POST['ProductImages']['description'];
+            $model->created_at = date("Y-m-d H:i:s");
+            $create = \ExtensionsModel\ProductImagesModel::model()->save(@$model);
+            if ($create > 0) {
+                $uploadfile = $model->upload_folder . '/' . $model->file_name;
+                move_uploaded_file($_FILES['ProductImages']['tmp_name']['file_name'], $uploadfile);
+                echo json_encode(['status'=>'success','message'=>'Successfully uploaded new images']); exit;
+            }
+        }
+
+        echo json_encode(['status'=>'failed','message'=>'Unable to upload the files.']); exit;
+        exit;
+    }
+
+    public function delete_image($request, $response, $args)
+    {
+        $isAllowed = $this->isAllowed($request, $response);
+        if ($isAllowed instanceof \Slim\Http\Response)
+            return $isAllowed;
+
+        if(!$isAllowed){
+            return $this->notAllowedAction();
+        }
+
+        if (!isset($_POST['id'])) {
+            return false;
+        }
+
+        $model = \ExtensionsModel\ProductImagesModel::model()->findByPk($_POST['id']);
+        $path = $this->_settings['basePath'].'/../'.$model->upload_folder.'/'.$model->file_name;
+        $delete = \ExtensionsModel\ProductImagesModel::model()->delete($model);
+        if ($delete) {
+            if (file_exists($path))
+                unlink($path);
+            echo true;
+        }
+        exit;
     }
 }

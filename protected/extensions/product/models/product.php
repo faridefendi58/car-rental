@@ -26,4 +26,25 @@ class ProductModel extends \Model\BaseModel
             ['title', 'required'],
         ];
     }
+
+    public function getImages($data)
+    {
+        $sql = "SELECT i.*  
+        FROM {tablePrefix}ext_product_images i 
+        WHERE i.product_id =:product_id";
+
+        $params = [ 'product_id' => $data['id'] ];
+
+        if (isset($data['type'])) {
+            $sql .= " AND i.type =:type";
+            $params['type'] = $data['type'];
+        }
+
+        $sql .= " ORDER BY i.id ASC";
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $rows = \Model\R::getAll( $sql, $params );
+        return $rows;
+    }
 }
