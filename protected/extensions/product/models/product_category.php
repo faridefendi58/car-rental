@@ -39,4 +39,20 @@ class ProductCategoryModel extends \Model\BaseModel
 
         return false;
     }
+
+    public function getItems($data = array()) {
+        $sql = "SELECT i.*   
+        FROM {tablePrefix}ext_product_category i 
+        WHERE 1";
+
+        $params = [];
+
+        $sql .= " ORDER BY i.id ASC";
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $rows = \Model\R::getAll( $sql, $params );
+
+        return $rows;
+    }
 }

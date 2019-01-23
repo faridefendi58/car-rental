@@ -39,4 +39,32 @@ class TranslationModel extends \Model\BaseModel
 
         return false;
     }
+
+    public function getItems() {
+        $sql = "SELECT i.*   
+        FROM {tablePrefix}ext_translation i 
+        WHERE 1";
+
+        $sql .= " GROUP BY i.original_text ORDER BY i.id ASC";
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $rows = \Model\R::getAll( $sql );
+
+        return $rows;
+    }
+
+    public function findByOriginalText($data) {
+        $sql = "SELECT i.translated_text  
+        FROM {tablePrefix}ext_translation i 
+        WHERE i.language_id =:language_id AND i.original_text =:original_text";
+
+        $params = ['language_id' => $data['language_id'], 'original_text' => $data['original_text']];
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $row = \Model\R::getRow( $sql, $params );
+
+        return $row['translated_text'];
+    }
 }

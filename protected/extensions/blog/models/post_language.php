@@ -28,4 +28,18 @@ class PostLanguageModel extends \Model\BaseModel
             ['created_at', 'required', 'on'=>'create'],
         ];
     }
+
+    public function getItems()
+    {
+        $sql = "SELECT i.*  
+        FROM {tablePrefix}ext_post_language i 
+        WHERE 1";
+
+        $sql .= " ORDER BY i.id ASC";
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $rows = \Model\R::getAll( $sql );
+        return $rows;
+    }
 }

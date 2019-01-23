@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% block pagetitle %}
+Daftar Terjemahan - {{ App.params.site_name }}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ 'lib/DataTables/media/css/jquery.dataTables.min.css' | admin_asset_url }}">
+<div id="main_wrapper">
+    <div class="page_bar clearfix">
+        <div class="row">
+            <div class="col-sm-10">
+                <h1 class="page_title">Terjemahan</h1>
+                <p class="text-muted">Daftar semua terjemahan</p>
+            </div>
+            <div class="col-sm-2 text-right">
+                <a class="btn btn-default" href="{{ 'translations/create' | link }}">Buat Terjemahan Baru</a>
+            </div>
+        </div>
+    </div>
+    <div class="page_content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Terjemahan</div>
+                        <div class="panel-body">
+                            <div class="alert" style="display: none;"></div>
+                            <div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer table-responsive" role="grid">
+                                <table id="dt_basic" class="table table-striped dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th>Original Text</th>
+                                        {% set languages = App.call.model("\\ExtensionsModel\\PostLanguageModel", 'getItems', {}) %}
+                                        {% for li, language in languages %}
+                                        <th>{{ language.language_name }}</th>
+                                        {% endfor %}
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i, data in datas %}
+                                    <tr>
+                                        <td>{{ data.original_text }}</td>
+                                        {% for li, language in languages %}
+                                        {% set translated_text = model.findByOriginalText({'original_text':data.original_text, 'language_id':language.id}) %}
+                                        <td><input type="text" name="Translation[{{ data.id }}][{{ language.id }}]"
+                                                   class="form-control" value="{{ translated_text }}"
+                                                   attr-lang="{{ language.id }}" attr-id="{{ data.id }}"
+                                                   style="width: 100%;"/> </td>
+                                        {% endfor %}
+                                        <td style="text-align: center;">
+                                            <a href="{{ 'translations/update' | link }}/{{ data.id }}" onclick="return changeData(this);">
+                                                <i class="fa fa-refresh"></i>
+                                            </a>
+                                            <a href="{{ 'translations/delete' | link }}/{{ data.id }}" onclick="return hapus(this);">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% else %}
+                                    <tr class="no-data">
+                                        <td>No data founds</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="row">
+                        <div class="row">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'partial/right_menu.html' %}
+{% endblock %}
+{% block endbodyjs %}
+<script src="{{ 'lib/DataTables/media/js/jquery.dataTables.min.js' | admin_asset_url }}"></script>
+<script src="{{ 'lib/DataTables/media/js/dataTables.bootstrap.js' | admin_asset_url }}"></script>
+<script type="text/javascript">
+    function hapus(data) {
+        if (confirm('Are you sure to delete ?')) {
+            var $this =  $(data);
+            var url = $this.attr('href');
+            $.ajax({
+                'url': url,
+                'type':'post',
+                'dataType': 'json',
+                'success': function(data) {
+                    if (data) {
+                        $this.parent().parent().remove();
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    function changeData(data) {
+        var $this =  $(data);
+        var url = $this.attr('href');
+        var arr = new Object();
+        $this.parent().parent().find('input').each(function () {
+           var language_id = $(this).attr('attr-lang');
+           var _id = $(this).attr('attr-id');
+           var trans_value = $(this).val();
+           arr[language_id] = trans_value;
+        });
+        console.log(arr);
+
+        $.ajax({
+            'url': url,
+            'type':'post',
+            'dataType': 'json',
+            'data':{'Translation':arr},
+            'success': function(data) {
+                console.log(data);
+                if (data.success) {
+                    $('.alert').removeClass('alert-warning').addClass('alert-success').html(data.message).show();
+                } else {
+                    $('.alert').addClass('alert-warning').removeClass('alert-success').html(data.message).show();
+                }
+                setTimeout(function () {
+                    $('.alert').hide();
+                }, 3000);
+            }
+        });
+
+        return false;
+    }
+</script>
+{% endblock %}

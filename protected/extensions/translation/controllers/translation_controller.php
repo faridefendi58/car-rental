@@ -43,11 +43,12 @@ class TranslationsController extends BaseController
             return $this->notAllowedAction();
         }
 
-        $model = new \ExtensionsModel\ProductCategoryModel();
-        $datas = \ExtensionsModel\ProductCategoryModel::model()->findAll();
+        $model = new \ExtensionsModel\TranslationModel();
+        $datas = $model->getItems();
 
-        return $this->_container->module->render($response, 'products/category_view.html', [
-            'datas' => $datas
+        return $this->_container->module->render($response, 'translations/view.html', [
+            'datas' => $datas,
+            'model' => $model
         ]);
     }
 
@@ -61,56 +62,43 @@ class TranslationsController extends BaseController
             return $this->notAllowedAction();
         }
 
-        $model = new \ExtensionsModel\ProductCategoryModel('create');
         $id = 0;
 
         $success = false; $errors = []; $data = [];
-        if (isset($_POST['ProductCategory'])){
-            $data = $_POST['ProductCategory'];
-            if (!empty($_FILES['ProductCategory'])) {
-                $path_info = pathinfo($_FILES['ProductCategory']['name']['image']);
-                if (!in_array($path_info['extension'], ['jpg','JPG','jpeg','JPEG','png','PNG'])) {
-                    array_push($errors, 'Image file should be in jpg or png format.');
-                }
+        if (isset($_POST['Translation'])){
+            $data = $_POST['Translation'];
 
-                $upload_folder = 'uploads/images/products';
-                $file_name = 'cat_'. time().'.'.$path_info['extension'];
-                $model->image = $upload_folder .'/'. $file_name;
-            }
-
-            if (empty($_POST['ProductCategory']['title'])) {
-                array_push($errors, 'Title is required.');
-            }
-
-            $model->title = $_POST['ProductCategory']['title'];
-            $model->description = $_POST['ProductCategory']['description'];
-            $model->created_at = date('Y-m-d H:i:s');
-            $model->updated_at = date('Y-m-d H:i:s');
-            if (count($errors) == 0) {
-                $create = \ExtensionsModel\ProductCategoryModel::model()->save(@$model);
-                if ($create > 0) {
-                    try {
-                        $uploadfile = $upload_folder . '/' . $file_name;
-                        move_uploaded_file($_FILES['ProductCategory']['tmp_name']['image'], $uploadfile);
-                    } catch (Exception $e) {}
-
-                    $message = 'Your data has been successfully created.';
-                    $success = true;
-                    $id = $model->id;
+            foreach ($data['translated_text'] as $lang_id => $t_text) {
+                $model = new \ExtensionsModel\ProductCategoryModel('create');
+                $model->original_text = $data['original_text'];
+                $model->language_id = $lang_id;
+                $model->translated_text = $t_text;
+                $model->created_at = date('Y-m-d H:i:s');
+                $model->updated_at = date('Y-m-d H:i:s');
+                $create = \ExtensionsModel\TranslationModel::model()->save(@$model);
+                if ($create <= 0) {
+                    $message = \ExtensionsModel\TranslationModel::model()->getErrors(false);
+                    array_push($errors, $message);
                 } else {
-                    $message = 'Failed to create new data.';
-                    $success = false;
+                    $lmodel = \ExtensionsModel\PostLanguageModel::model()->findByPk($lang_id);
+                    if ($lmodel instanceof \RedBeanPHP\OODBBean) {
+                        $this->modify_json_data($lmodel->code, $data['original_text'], $t_text);
+                    }
                 }
+            }
+
+            if (count($errors) == 0) {
+                $message = 'Your data has been successfully created.';
+                $success = true;
             } else {
                 $success = false;
                 $message = implode(", ", $errors);
             }
         }
 
-        return $this->_container->module->render($response, 'products/category_create.html', [
+        return $this->_container->module->render($response, 'translations/create.html', [
             'message' => ($message) ? $message : null,
             'success' => $success,
-            'id' => $id,
             'data' => $data
         ]);
     }
@@ -125,63 +113,40 @@ class TranslationsController extends BaseController
             return $this->notAllowedAction();
         }
 
+        $params = $request->getParams();
+
         if (empty($args['id']))
             return false;
 
-        $model = \ExtensionsModel\ProductCategoryModel::model()->findByPk($args['id']);
+        $mdl = \ExtensionsModel\TranslationModel::model()->findByPk($args['id']);
 
-        $success = false; $errors = []; $data = [];
-        if (isset($_POST['ProductCategory'])){
-            $data = $_POST['ProductCategory'];
-            $old_image = $model->image;
-            if (!empty($_FILES['ProductCategory']['name']['image'])) {
-                $path_info = pathinfo($_FILES['ProductCategory']['name']['image']);
-                if (!in_array($path_info['extension'], ['jpg','JPG','jpeg','JPEG','png','PNG'])) {
-                    array_push($errors, 'Image file should be in jpg or png format.');
-                }
-
-                $upload_folder = 'uploads/images/products';
-                $file_name = 'cat_'. time().'.'.$path_info['extension'];
-                $model->image = $upload_folder .'/'. $file_name;
-            }
-
-            if (empty($_POST['ProductCategory']['title'])) {
-                array_push($errors, 'Title is required.');
-            }
-
-            $model->title = $_POST['ProductCategory']['title'];
-            $model->description = $_POST['ProductCategory']['description'];
-            $model->updated_at = date('Y-m-d H:i:s');
-            if (count($errors) == 0) {
-                $update = \ExtensionsModel\ProductCategoryModel::model()->update($model);
-                if ($update > 0) {
-                    if (!empty($file_name)) {
-                        try {
-                            $uploadfile = $upload_folder . '/' . $file_name;
-                            move_uploaded_file($_FILES['ProductCategory']['tmp_name']['image'], $uploadfile);
-                            unlink($old_image);
-                        } catch (Exception $e) {}
+        $success = false; $errors = [];
+        if (isset($_POST['Translation'])){
+            foreach ($params['Translation'] as $lang_id => $t_val) {
+                $model = \ExtensionsModel\TranslationModel::model()->findByAttributes(['language_id' => $lang_id, 'original_text' => $mdl->original_text]);
+                if ($model instanceof \RedBeanPHP\OODBBean && $model->translated_text != $t_val) {
+                    $model->translated_text = $t_val;
+                    $model->updated_at = date('Y-m-d H:i:s');
+                    $update = \ExtensionsModel\TranslationModel::model()->update($model);
+                    if ($update > 0) {
+                        $lmodel = \ExtensionsModel\PostLanguageModel::model()->findByPk($lang_id);
+                        if ($lmodel instanceof \RedBeanPHP\OODBBean) {
+                            $this->modify_json_data($lmodel->code, $mdl->original_text, $t_val);
+                        }
+                        $success = true;
+                    } else {
+                        $message = \ExtensionsModel\TranslationModel::model()->getErrors(false);
+                        array_push($errors, $message);
                     }
-
-                    $message = 'Your data has been successfully updated.';
-                    $success = true;
-                    $slide_id = $model->id;
-                } else {
-                    $message = 'Failed to update data.';
-                    $success = false;
                 }
+            }
+
+            if (count($errors) == 0) {
+                return json_encode(['success' => true, 'message' => 'Your data has been successfully updated.']);
             } else {
-                $success = false;
-                $message = implode(", ", $errors);
+                return json_encode(['success' => false, 'message' => implode(", ", $message)]);
             }
         }
-
-        return $this->_container->module->render($response, 'products/category_update.html', [
-            'message' => ($message) ? $message : null,
-            'success' => $success,
-            'id' => $model->id,
-            'model' => $model
-        ]);
     }
 
     public function delete($request, $response, $args)
@@ -198,17 +163,44 @@ class TranslationsController extends BaseController
             return false;
         }
 
-        $model = \ExtensionsModel\ProductCategoryModel::model()->findByPk($args['id']);
-        $image_file = $model->image;
-        $delete = \ExtensionsModel\ProductCategoryModel::model()->delete($model);
+        $model = \ExtensionsModel\TranslationModel::model()->findByPk($args['id']);
+        $original_text = $model->original_text;
+        $delete = \ExtensionsModel\TranslationModel::model()->delete($model);
         if ($delete) {
-            if (!empty($image_file)) {
-                try {
-                    unlink($image_file);
-                } catch (Exception $e) {}
+            $delete2 = \ExtensionsModel\TranslationModel::model()->deleteAllByAttributes(['original_text' => $original_text]);
+            $langs = \ExtensionsModel\PostLanguageModel::model()->findAll();
+            foreach ($langs as $lang) {
+                $this->modify_json_data($lang->code, $original_text, null);
             }
             $message = 'Your data has been successfully deleted.';
             echo true;
+        }
+    }
+
+    private function modify_json_data($lang, $original_text, $translated_val = null) {
+        $fname = $this->_settings['basePath'].'/data/trans_'.$lang.'.json';
+        if (!file_exists($fname)) {
+            // create new file
+            $file = fopen($fname, 'w');
+        }
+
+        $content = file_get_contents($fname);
+        $trans_data = json_decode($content, true);
+
+        if (is_array($trans_data)){
+            if (!empty($translated_val)) {
+                $trans_data[$original_text] = $translated_val;
+            } else {
+                unset($trans_data[$original_text]);
+            }
+        } else {
+            $trans_data = [$original_text => $translated_val];
+        }
+
+        try {
+            file_put_contents($fname, json_encode($trans_data));
+        } catch (Exception $e) {
+            var_dump($e->getMessage());
         }
     }
 }

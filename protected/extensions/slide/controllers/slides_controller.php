@@ -90,7 +90,7 @@ class SlidesController extends BaseController
                 $model->order = 0;
             }
             $model->category_id = $_POST['SlideShow']['category_id'];
-            $model->description = $_POST['SlideShow']['description'];
+            //$model->description = $_POST['SlideShow']['description'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             if (count($errors) == 0) {
@@ -167,7 +167,7 @@ class SlidesController extends BaseController
                 $model->order = 0;
             }
             $model->category_id = $_POST['SlideShow']['category_id'];
-            $model->description = $_POST['SlideShow']['description'];
+            //$model->description = $_POST['SlideShow']['description'];
             $model->updated_at = date('Y-m-d H:i:s');
             if (count($errors) == 0) {
                 $update = \ExtensionsModel\SlideShowModel::model()->update($model);
