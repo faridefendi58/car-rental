@@ -57,4 +57,27 @@ class ProductModel extends \Model\BaseModel
             '24H' => '24 Jam',
             ];
     }
+
+    public function getItems($data = array()) {
+        $sql = "SELECT i.*, CONCAT(im.upload_folder, '/', im.file_name) AS image, 
+        p.unit_price, p.discount, p.title AS price_title   
+        FROM {tablePrefix}ext_product i  
+        RIGHT JOIN {tablePrefix}ext_product_images im ON im.product_id = i.id 
+        RIGHT JOIN {tablePrefix}ext_product_prices p ON p.product_id = i.id 
+        WHERE 1";
+
+        $params = [];
+        if (isset($data['category_id'])) {
+            $sql .= ' AND i.category_id =:category_id';
+            $params['category_id'] = $data['category_id'];
+        }
+
+        $sql .= " GROUP BY i.id ORDER BY i.id ASC";
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $rows = \Model\R::getAll( $sql, $params );
+
+        return $rows;
+    }
 }
