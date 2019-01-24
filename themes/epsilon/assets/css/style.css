@@ -163,3 +163,8 @@
 .store-thumbnails .overlay {opacity: 0.5 !important;}
 .staff-slider img {border-radius: 0px;}
 .no-margin {margin:0px !important;}
+.header-icon-3 {width: 100px;}
+.header-icon-3 ul {list-style-type: none;}
+.header-icon-3 ul li {width: 32px;height:32px;display: inline-block;vertical-align: middle;margin:0px;}
+.header-icon-2 {margin-right: 80px;}
+.header-icon-1 {margin-right: 140px;}
