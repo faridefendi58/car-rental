@@ -193,7 +193,7 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
             }, 2000);
         }
 
-        $("#submit-image-form").click(function(){
+        $("#submit-image-form").click(function(e){
             var formData = new FormData($('form[id="image-form"]')[0]);
             $.ajax({
                 //beforeSend: function() { Loading.show(); },
@@ -225,6 +225,7 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                 contentType: false,
                 processData: false
             });
+            e.stopImmediatePropagation();
             return false;
         });
     });

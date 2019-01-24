@@ -109,7 +109,7 @@
         });
     }
     $(function () {
-        $('#product-prices-form').submit(function () {
+        $('#product-prices-form').submit(function (e) {
             var url = $(this).attr('action');
             $.ajax({
                 'url': url,
@@ -130,6 +130,8 @@
                     console.log("Status: " + textStatus + " Message: "+errorThrown);
                 }
             });
+
+            e.stopImmediatePropagation();
 
             return false;
         });
