@@ -80,14 +80,15 @@ class TranslationsController extends BaseController
                     $message = \ExtensionsModel\TranslationModel::model()->getErrors(false);
                     array_push($errors, $message);
                 } else {
-                    $lmodel = \ExtensionsModel\PostLanguageModel::model()->findByPk($lang_id);
+                    /*$lmodel = \ExtensionsModel\PostLanguageModel::model()->findByPk($lang_id);
                     if ($lmodel instanceof \RedBeanPHP\OODBBean) {
                         $this->modify_json_data($lmodel->code, $data['original_text'], $t_text);
-                    }
+                    }*/
                 }
             }
 
             if (count($errors) == 0) {
+                $this->refresh_data();
                 $message = 'Your data has been successfully created.';
                 $success = true;
             } else {
@@ -129,10 +130,10 @@ class TranslationsController extends BaseController
                     $model->updated_at = date('Y-m-d H:i:s');
                     $update = \ExtensionsModel\TranslationModel::model()->update($model);
                     if ($update > 0) {
-                        $lmodel = \ExtensionsModel\PostLanguageModel::model()->findByPk($lang_id);
+                        /*$lmodel = \ExtensionsModel\PostLanguageModel::model()->findByPk($lang_id);
                         if ($lmodel instanceof \RedBeanPHP\OODBBean) {
                             $this->modify_json_data($lmodel->code, $mdl->original_text, $t_val);
-                        }
+                        }*/
                         $success = true;
                     } else {
                         $message = \ExtensionsModel\TranslationModel::model()->getErrors(false);
@@ -142,6 +143,7 @@ class TranslationsController extends BaseController
             }
 
             if (count($errors) == 0) {
+                $this->refresh_data();
                 return json_encode(['success' => true, 'message' => 'Your data has been successfully updated.']);
             } else {
                 return json_encode(['success' => false, 'message' => implode(", ", $message)]);
@@ -168,10 +170,11 @@ class TranslationsController extends BaseController
         $delete = \ExtensionsModel\TranslationModel::model()->delete($model);
         if ($delete) {
             $delete2 = \ExtensionsModel\TranslationModel::model()->deleteAllByAttributes(['original_text' => $original_text]);
-            $langs = \ExtensionsModel\PostLanguageModel::model()->findAll();
+            $this->refresh_data();
+            /*$langs = \ExtensionsModel\PostLanguageModel::model()->findAll();
             foreach ($langs as $lang) {
                 $this->modify_json_data($lang->code, $original_text, null);
-            }
+            }*/
             $message = 'Your data has been successfully deleted.';
             echo true;
         }
@@ -203,5 +206,31 @@ class TranslationsController extends BaseController
         } catch (Exception $e) {
             var_dump($e->getMessage());
         }
+    }
+
+    private function refresh_data() {
+        $langs = \ExtensionsModel\PostLanguageModel::model()->findAll();
+        foreach ($langs as $lang) {
+            $trans_data = \ExtensionsModel\TranslationModel::model()->findAllByAttributes(['language_id' => $lang->id]);
+            $items = [];
+            foreach ($trans_data as $data) {
+                $items[$data->original_text] = $data->translated_text;
+            }
+
+            $fname = $this->_settings['basePath'].'/data/trans_'.$lang->code.'.json';
+            if (!file_exists($fname)) {
+                // create new file
+                $file = fopen($fname, 'w');
+                throw new \Exception("Translation file not found");
+            }
+
+            try {
+                file_put_contents($fname, json_encode($items));
+            } catch (Exception $e) {
+                var_dump($e->getMessage());
+            }
+        }
+
+        return true;
     }
 }
