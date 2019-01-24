@@ -200,7 +200,7 @@ class TranslationsController extends BaseController
         try {
             file_put_contents($fname, json_encode($trans_data));
         } catch (Exception $e) {
-            var_dump($e->getMessage());
+            var_dump($e->getMessage());exit;
         }
     }
 }
