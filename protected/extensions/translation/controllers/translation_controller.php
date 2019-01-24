@@ -178,6 +178,7 @@ class TranslationsController extends BaseController
     }
 
     private function modify_json_data($lang, $original_text, $translated_val = null) {
+        return true;
         $fname = $this->_settings['basePath'].'/data/trans_'.$lang.'.json';
         if (!file_exists($fname)) {
             // create new file
@@ -200,7 +201,7 @@ class TranslationsController extends BaseController
         try {
             file_put_contents($fname, json_encode($trans_data));
         } catch (Exception $e) {
-            var_dump($e->getMessage());exit;
+            var_dump($e->getMessage());
         }
     }
 }

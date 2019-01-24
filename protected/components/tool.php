@@ -122,6 +122,11 @@ class Tool
             $lang = $current_lang;
         }
 
+        $lmodel = \ExtensionsModel\PostLanguageModel::model()->findByAttributes(['code' => $lang]);
+        $model = new \ExtensionsModel\TranslationModel();
+        $txt = $model->findByOriginalText(['language_id' => $lmodel->id, 'original_text' => $text]);
+        return $txt;
+
         if (!file_exists(realpath(dirname(__DIR__)).'/data/trans_'.$lang.'.json'))
             return $text;
 
