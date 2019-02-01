@@ -1,0 +1,10 @@
+{
+    "id" : "codeeditor",
+    "name" : "Code Editor",
+    "description" : "Code Editor module for slightsite 1.0",
+    "icon" : "icon.png",
+    "author" : "farid efendi",
+    "author_url" : "https://www.slightsite.com/",
+    "license" : "GPL version 2 or later - http://www.gnu.org/licenses/old-licenses/gpl-2.0.html",
+    "version" : "1.0.0"
+}
