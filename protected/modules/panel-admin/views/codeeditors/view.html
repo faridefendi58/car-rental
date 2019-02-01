@@ -23,10 +23,16 @@ Code Editor - {{ App.params.site_name }}
                         <div class="panel-body">
                             <div class="row">
                                 <div class="col-md-8">
-                                    <div class="form-group">
-                                        <label>{{ selected_theme | title }} : {{ selected_file.name }}</label>
-                                        <textarea id="page-content" style="height: 350px; width: 100%;" name="content">{{ selected_file.content  }}</textarea>
-                                    </div>
+                                    <form method="post">
+                                        <div class="alert alert-info" style="display: none;">{{ selected_file.name }} has been succefully updated.</div>
+                                        <div class="form-group">
+                                            <label>{{ selected_theme | title }} : {{ selected_file.name }}</label>
+                                            <textarea id="page-content" style="height: 350px; width: 100%;" name="content">{{ selected_file.content  }}</textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="submit" value="Update File" class="btn btn-info">
+                                        </div>
+                                    </form>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
@@ -72,8 +78,8 @@ Code Editor - {{ App.params.site_name }}
 {% block endbodyjs %}
 <script src="{{ 'lib/editarea/edit_area_full.js' | admin_asset_url }}"></script>
 <script type="text/javascript">
-    /*$(function(){
-        editAreaLoader.init({
+    $(function(){
+        /*editAreaLoader.init({
             id: "page-content"	// id of the textarea to transform
             ,start_highlight: true	// if start with highlight
             ,allow_resize: "both"
@@ -81,14 +87,15 @@ Code Editor - {{ App.params.site_name }}
             ,word_wrap: true
             ,language: "en"
             ,syntax: "{{ selected_file.type }}"
-        });
-        var success_message = "{{ message }}";
-        if (success_message && success_message.length > 0) {
+        });*/
+        var updated = "{{ updated }}";
+        if (updated) {
+            $('.alert').show();
             setTimeout(function () {
                 window.location.href = window.location;
             }, 3000);
         }
-    });*/
+    });
     $('select[name="theme"]').change(function () {
         var href = "{{ 'code-editor/view' | link }}?theme="+ $(this).val();
         window.location.href = href;
