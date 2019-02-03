@@ -168,3 +168,11 @@
 .header-icon-3 ul li {width: 32px;height:32px;display: inline-block;vertical-align: middle;margin:0px;}
 .header-icon-2 {margin-right: 80px;}
 .header-icon-1 {margin-right: 120px;}
+.font-size-16{font-size: 16px;}
+.content-strip .strip-content h2 {color: #FFF;padding-left: 30px;padding-right: 30px;font-size: 20px;margin-bottom: 5px;}
+@media (min-width: 768px) {
+    .page-blog-sidebar-left {
+        width: 25% !important;
+    }
+    .content-strip .strip-content h2 {text-align: center;}
+}
