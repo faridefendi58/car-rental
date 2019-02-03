@@ -72,6 +72,8 @@
                         'url': '{{ "products/default/delete-price" | link }}/'+$(dt).attr('attr-id'),
                         'type':'post',
                         'data':{'id':$(dt).attr('attr-id')},
+                        'async': false,
+                        'cache': false,
                         'success': function(data) {
                             console.log(data);
                             if (data.status == 'success') {
@@ -118,6 +120,8 @@
                 'type':'post',
                 'data': form.serialize(),
                 'dataType': 'json',
+                'async': false,
+                'cache': false,
                 'success': function(data) {
                     console.log(data);
                     if (data.status == 'success') {
