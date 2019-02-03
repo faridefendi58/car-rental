@@ -275,17 +275,17 @@ class ProductDefaultController extends BaseController
             $current_time = time();
             if(isset($_SESSION['ProductPrices']) && !empty($_SESSION['ProductPrices'])) {
                 $selisih = $current_time - $_SESSION['ProductPrices'];
-                if ($selisih <= 30) {
+                if ($selisih <= 10) {
                     return $response->withJson(
                         [
                             'status' => 'success',
                             'message' => 'Data berhasil disimpan.',
                         ], 201);
                 } else {
-                    $_SESSION['PostProductPrices'] = $current_time;
+                    $_SESSION['ProductPrices'] = $current_time;
                 }
             } else {
-                $_SESSION['PostProductPrices'] = $current_time;
+                $_SESSION['ProductPrices'] = $current_time;
             }
 
             foreach ($_POST['ProductPrices']['title'] as $i => $title) {
@@ -352,7 +352,7 @@ class ProductDefaultController extends BaseController
         $current_time = time();
         if(isset($_SESSION['DeletePrices']) && !empty($_SESSION['DeletePrices'])) {
             $selisih = $current_time - $_SESSION['DeletePrices'];
-            if ($selisih <= 30) {
+            if ($selisih <= 10) {
                 return $response->withJson(
                     [
                         'status' => 'success',
