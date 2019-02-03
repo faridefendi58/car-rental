@@ -109,7 +109,31 @@
         });
     }
     $(function () {
-        $('#product-prices-form').submit(function (e) {
+        $('#product-prices-form').find('input[type="submit"]').click(function () {
+            $.ajax({
+                'beforeSend': function() {$('#product-prices-form').removeAttr('action');},
+                'complete': function() {},
+                'url': url,
+                'type':'post',
+                'data': $('#product-prices-form').serialize(),
+                'success': function(data) {
+                    console.log(data);
+                    if (data.status == 'success') {
+                        var alert_success = $('#product-prices-form').find('.alert-success');
+                        alert_success.html(data.message);
+                        alert_success.show();
+                        setTimeout(function () {
+                            window.location.reload(true);
+                        }, 5000);
+                    }
+                },
+                error: function(XMLHttpRequest, textStatus, errorThrown) {
+                    console.log("Status: " + textStatus + " Message: "+errorThrown);
+                }
+            });
+            return false;
+        });
+        /*$('#product-prices-form').submit(function (e) {
             var url = $(this).attr('action');
             var $this = $(this);
             $.ajax({
@@ -137,6 +161,6 @@
             e.stopImmediatePropagation();
 
             return false;
-        });
+        });*/
     });
 </script>
