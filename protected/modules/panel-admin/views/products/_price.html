@@ -111,7 +111,10 @@
     $(function () {
         $('#product-prices-form').submit(function (e) {
             var url = $(this).attr('action');
+            var $this = $(this);
             $.ajax({
+                'beforeSend': function() {$this.removeAttr('action');},
+                'complete': function() {},
                 'url': url,
                 'type':'post',
                 'data': $('#product-prices-form').serialize(),
