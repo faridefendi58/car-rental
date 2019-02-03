@@ -110,16 +110,18 @@
     }
     $(function () {
         $('#product-prices-form').find('input[type="submit"]').click(function () {
+            var form = $('#product-prices-form');
             $.ajax({
-                'beforeSend': function() {$('#product-prices-form').removeAttr('action');},
+                'beforeSend': function() {form.removeAttr('action');},
                 'complete': function() {},
-                'url': url,
+                'url': form.attr('action'),
                 'type':'post',
-                'data': $('#product-prices-form').serialize(),
+                'data': form.serialize(),
+                'dataType': 'json',
                 'success': function(data) {
                     console.log(data);
                     if (data.status == 'success') {
-                        var alert_success = $('#product-prices-form').find('.alert-success');
+                        var alert_success = form.find('.alert-success');
                         alert_success.html(data.message);
                         alert_success.show();
                         setTimeout(function () {
