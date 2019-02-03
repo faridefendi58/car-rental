@@ -197,8 +197,8 @@ class ProductDefaultController extends BaseController
                 }
             }
             $message = 'Your data has been successfully deleted.';
-            echo true;
         }
+        echo true;
     }
 
     public function get_upload_images($request, $response, $args)
@@ -271,6 +271,23 @@ class ProductDefaultController extends BaseController
         $model = \ExtensionsModel\ProductModel::model()->findByPk($args['id']);
 
         if (isset($_POST['ProductPrices']) && !empty($_POST['ProductPrices']['product_id'])) {
+            // avoid double execution
+            $current_time = time();
+            if(isset($_SESSION['ProductPrices']) && !empty($_SESSION['ProductPrices'])) {
+                $selisih = $current_time - $_SESSION['ProductPrices'];
+                if ($selisih <= 30) {
+                    return $response->withJson(
+                        [
+                            'status' => 'success',
+                            'message' => 'Data berhasil disimpan.',
+                        ], 201);
+                } else {
+                    $_SESSION['PostProductPrices'] = $current_time;
+                }
+            } else {
+                $_SESSION['PostProductPrices'] = $current_time;
+            }
+
             foreach ($_POST['ProductPrices']['title'] as $i => $title) {
                 if (empty($_POST['ProductPrices']['id'][$i])) {
                     $model[$i] = new \ExtensionsModel\ProductPricesModel();
@@ -329,6 +346,23 @@ class ProductDefaultController extends BaseController
 
         if (!isset($args['id'])) {
             return false;
+        }
+
+        // avoid double execution
+        $current_time = time();
+        if(isset($_SESSION['DeletePrices']) && !empty($_SESSION['DeletePrices'])) {
+            $selisih = $current_time - $_SESSION['DeletePrices'];
+            if ($selisih <= 30) {
+                return $response->withJson(
+                    [
+                        'status' => 'success',
+                        'message' => 'Data berhasil dihapus.',
+                    ], 201);
+            } else {
+                $_SESSION['DeletePrices'] = $current_time;
+            }
+        } else {
+            $_SESSION['DeletePrices'] = $current_time;
         }
 
         $model = \ExtensionsModel\ProductPricesModel::model()->findByPk($_POST['id']);
