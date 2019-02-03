@@ -207,8 +207,8 @@ class ProductCategoryController extends BaseController
                     unlink($image_file);
                 } catch (Exception $e) {}
             }
-            $message = 'Your data has been successfully deleted.';
-            echo true;
         }
+        $message = 'Your data has been successfully deleted.';
+        echo true;
     }
 }
