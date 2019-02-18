@@ -288,17 +288,17 @@ class ProductDefaultController extends BaseController
                 $_SESSION['ProductPrices'] = $current_time;
             }
 
-            foreach ($_POST['ProductPrices']['title'] as $i => $title) {
+            foreach ($_POST['ProductPrices']['category_id'] as $i => $title) {
                 if (empty($_POST['ProductPrices']['id'][$i])) {
                     $model[$i] = new \ExtensionsModel\ProductPricesModel();
-                    $model[$i]->title = $_POST['ProductPrices']['title'][$i];
+                    $model[$i]->category_id = $_POST['ProductPrices']['category_id'][$i];
                     $model[$i]->product_id = $_POST['ProductPrices']['product_id'];
                     $model[$i]->unit_price = $_POST['ProductPrices']['unit_price'][$i];
                     $model[$i]->discount = $_POST['ProductPrices']['discount'][$i];
                     $model[$i]->period = $_POST['ProductPrices']['period'][$i];
                     $model[$i]->created_at = date("Y-m-d H:i:s");
                     $model[$i]->updated_at = date("Y-m-d H:i:s");
-                    if (!empty($model[$i]->title) && $model[$i]->unit_price > 0) {
+                    if (!empty($model[$i]->category_id) && $model[$i]->unit_price > 0) {
                         $save = \ExtensionsModel\ProductPricesModel::model()->save($model[$i]);
                     }
                 } else {
@@ -307,7 +307,7 @@ class ProductDefaultController extends BaseController
                     $pmodel[$i]->discount = $_POST['ProductPrices']['discount'][$i];
                     $pmodel[$i]->period = $_POST['ProductPrices']['period'][$i];
                     $pmodel[$i]->updated_at = date("Y-m-d H:i:s");
-                    if (!empty($pmodel[$i]->title) && $pmodel[$i]->unit_price > 0) {
+                    if (!empty($pmodel[$i]->category_id) && $pmodel[$i]->unit_price > 0) {
                         try {
                             $update = \ExtensionsModel\ProductPricesModel::model()->update($pmodel[$i]);
 
