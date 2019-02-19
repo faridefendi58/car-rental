@@ -77,6 +77,12 @@ class ProductDefaultController extends BaseController
             }
 
             $model->title = $_POST['Product']['title'];
+            if (isset($_POST['Product']['slug'])) {
+                $model->slug = $_POST['Product']['slug'];
+            } else {
+                $pmodel = new \ExtensionsModel\PostModel();
+                $model->slug = $pmodel->createSlug($model->title);
+            }
             $model->category_id = $_POST['Product']['category_id'];
             $model->status = $_POST['Product']['status'];
             $model->description = $_POST['Product']['description'];
@@ -133,6 +139,12 @@ class ProductDefaultController extends BaseController
             }
 
             $model->title = $_POST['Product']['title'];
+            if (isset($_POST['Product']['slug'])) {
+                $model->slug = $_POST['Product']['slug'];
+            } else {
+                $pmodel = new \ExtensionsModel\PostModel();
+                $model->slug = $pmodel->createSlug($model->title);
+            }
             $model->category_id = $_POST['Product']['category_id'];
             $model->status = $_POST['Product']['status'];
             $model->description = $_POST['Product']['description'];

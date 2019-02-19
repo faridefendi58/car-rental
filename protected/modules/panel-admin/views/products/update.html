@@ -36,6 +36,11 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                                            placeholder="Name of the category" value="{{ model.title }}">
                                 </div>
                                 <div class="form-group">
+                                    <label>Permalink <span class="red">*</span></label>
+                                    <input type="text" name="Product[slug]" class="form-control"
+                                           placeholder="Permalink url of detail product" value="{{ model.slug }}" id="permalink">
+                                </div>
+                                <div class="form-group">
                                     <label>Kategori <span class="red">*</span></label>
                                     <select name="Product[category_id]" class="form-control">
                                         {% for category in categories %}
