@@ -83,6 +83,12 @@ class ProductCategoryController extends BaseController
             }
 
             $model->title = $_POST['ProductCategory']['title'];
+            if (isset($_POST['ProductCategory']['slug'])) {
+                $model->slug = $_POST['ProductCategory']['slug'];
+            } else {
+                $pmodel = new \ExtensionsModel\PostModel();
+                $model->slug = $pmodel->createSlug($model->title);
+            }
             $model->description = $_POST['ProductCategory']['description'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
@@ -150,6 +156,12 @@ class ProductCategoryController extends BaseController
             }
 
             $model->title = $_POST['ProductCategory']['title'];
+            if (isset($_POST['ProductCategory']['slug'])) {
+                $model->slug = $_POST['ProductCategory']['slug'];
+            } else {
+                $pmodel = new \ExtensionsModel\PostModel();
+                $model->slug = $pmodel->createSlug($model->title);
+            }
             $model->description = $_POST['ProductCategory']['description'];
             $model->updated_at = date('Y-m-d H:i:s');
             if (count($errors) == 0) {

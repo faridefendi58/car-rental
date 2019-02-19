@@ -36,6 +36,11 @@ Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
                                                placeholder="Name of the category" value="{{ model.title }}">
                                     </div>
                                     <div class="form-group">
+                                        <label>Permalink <span class="red">*</span></label>
+                                        <input type="text" name="ProductCategory[slug]" class="form-control"
+                                               placeholder="Permalink of the category" value="{{ model.slug }}">
+                                    </div>
+                                    <div class="form-group">
                                         <label>Image</label>
                                         <img src="{{ model.image | link }}" class="img-responsive img-thumbnail mb10"/>
                                         <input type="file" name="ProductCategory[image]" class="">

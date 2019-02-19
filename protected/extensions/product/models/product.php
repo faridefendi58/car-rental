@@ -60,8 +60,9 @@ class ProductModel extends \Model\BaseModel
 
     public function getItems($data = array()) {
         $sql = "SELECT i.*, CONCAT(im.upload_folder, '/', im.file_name) AS image, 
-        p.unit_price, p.discount, c.title AS price_title   
+        p.unit_price, p.discount, c.title AS price_title, ct.slug AS category_slug   
         FROM {tablePrefix}ext_product i  
+        LEFT JOIN {tablePrefix}ext_product_category ct ON ct.id = i.category_id 
         LEFT JOIN {tablePrefix}ext_product_images im ON im.product_id = i.id 
         LEFT JOIN {tablePrefix}ext_product_prices p ON p.product_id = i.id 
         LEFT JOIN {tablePrefix}ext_product_price_category c ON c.id = p.category_id 
