@@ -52,6 +52,11 @@ Landing Pages - {{ App.name }}
                                                 <i class="fa fa-arrows-alt"></i>
                                             </a>
                                             {% endif %}
+
+                                            <a href="{{ 'pages/update' | alink }}/{{ page.slug }}?e=summernote" title="Ubah Halaman">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+
                                             <a href="{{ 'pages/update' | alink }}/{{ page.slug }}" title="Ubah Kode">
                                                 <i class="fa fa-code"></i>
                                             </a>
