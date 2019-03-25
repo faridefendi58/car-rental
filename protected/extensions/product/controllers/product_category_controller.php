@@ -18,6 +18,7 @@ class ProductCategoryController extends BaseController
         $app->map(['GET', 'POST'], '/create', [$this, 'create']);
         $app->map(['GET', 'POST'], '/update/[{id}]', [$this, 'update']);
         $app->map(['POST'], '/delete/[{id}]', [$this, 'delete']);
+        $app->map(['POST'], '/create-product', [$this, 'create_product']);
     }
 
     public function accessRules()
@@ -222,5 +223,81 @@ class ProductCategoryController extends BaseController
         }
         $message = 'Your data has been successfully deleted.';
         echo true;
+    }
+
+    public function create_product($request, $response, $args)
+    {
+        $isAllowed = $this->isAllowed($request, $response);
+        if ($isAllowed instanceof \Slim\Http\Response)
+            return $isAllowed;
+
+        if(!$isAllowed){
+            return $this->notAllowedAction();
+        }
+
+        $model = new \ExtensionsModel\ProductModel('create');
+        $categories = \ExtensionsModel\ProductCategoryModel::model()->findAll();
+        $id = 0;
+
+        $success = false; $message = null; $errors = []; $data = [];
+        if (isset($_POST['Product'])){
+
+            // avoid double execution
+            $current_time = time();
+            if(isset($_SESSION['Product']) && !empty($_SESSION['Product'])) {
+                $selisih = $current_time - $_SESSION['Product'];
+                if ($selisih <= 10) {
+                    return $response->withJson(
+                        [
+                            'status' => 'success',
+                            'message' => 'Data berhasil disimpan.',
+                        ], 201);
+                } else {
+                    $_SESSION['Product'] = $current_time;
+                }
+            } else {
+                $_SESSION['Product'] = $current_time;
+            }
+
+            $data = $_POST['Product'];
+
+            if (empty($_POST['Product']['title'])) {
+                array_push($errors, 'Title is required.');
+            }
+
+            $model->title = $_POST['Product']['title'];
+            if (isset($_POST['Product']['slug'])) {
+                $model->slug = $_POST['Product']['slug'];
+            } else {
+                $pmodel = new \ExtensionsModel\PostModel();
+                $model->slug = $pmodel->createSlug($model->title);
+            }
+            $model->category_id = $_POST['Product']['category_id'];
+            $model->status = $_POST['Product']['status'];
+            $model->description = $_POST['Product']['description'];
+            $model->created_at = date('Y-m-d H:i:s');
+            $model->updated_at = date('Y-m-d H:i:s');
+            if (count($errors) == 0) {
+                $create = \ExtensionsModel\ProductModel::model()->save(@$model);
+                if ($create > 0) {
+                    $message = 'Your data has been successfully created.';
+                    $success = true;
+                    $id = $model->id;
+                } else {
+                    $message = 'Failed to create new data.';
+                    $success = false;
+                }
+            } else {
+                $success = false;
+                $message = implode(", ", $errors);
+            }
+        }
+
+        return $response->withJson(
+            [
+                'status' => ($success)? 'success' : 'failed',
+                'message' => $message,
+                'id' => $id
+            ], 201);
     }
 }

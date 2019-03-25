@@ -22,12 +22,13 @@ Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
                 <div class="col-lg-12">
                     <div class="panel panel-default">
                         <div class="panel-heading">
-                            Produk {{ model.title }}
+                            Produk Kategori {{ model.title }}
                         </div>
                         <div class="panel-body">
                             <ul class="nav nav-tabs" id="tabs_a">
                                 <li class="active"><a data-toggle="tab" href="#detail">Ubah Data</a></li>
-                                <li><a data-toggle="tab" href="#service-product">Produk Layanan</a></li>
+                                <li><a data-toggle="tab" href="#service-product">Daftar Produk {{ model.title }}</a></li>
+                                <li><a data-toggle="tab" href="#add-product">Tambah Produk</a></li>
                             </ul>
                             <div class="tab-content" id="tabs_content_a">
                                 <div id="detail" class="tab-pane fade in active">
@@ -65,6 +66,12 @@ Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
                                         </div>
                                     </form>
                                 </div>
+                                <div id="service-product" class="tab-pane fade">
+                                    {% include 'products/_product.html' with {'model':model} %}
+                                </div>
+                                <div id="add-product" class="tab-pane fade">
+                                    {% include 'products/_product_form.html' with {'category_id':model.id} %}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -76,6 +83,7 @@ Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
 {% include 'partial/right_menu.html' %}
 {% endblock %}
 {% block endbodyjs %}
+<script src="{{ 'lib/DataTables/media/js/jquery.dataTables.min.js' | admin_asset_url }}"></script>
 <script src="{{ 'js/bootstrap-fileupload.min.js' | admin_asset_url }}"></script>
 <script type="text/javascript" src="{{ 'lib/tinymce/tinymce.min.js' | admin_asset_url }}"></script>
 <script type="text/javascript">
@@ -88,5 +96,61 @@ Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
             }, 2000);
         }
     });
+
+    function getSlug(data){
+        $.ajax({
+            'beforeSend': function() {  },
+            'complete': function() {  },
+            'url': "{{ 'blog/posts/get-slug' | link }}",
+            'type':'post',
+            'data':{'title':$(data).val()},
+            'success': function(data) {
+                $('#permalink').attr('value',data);
+            }
+        });
+    }
+
+    function saveAjax(dt, form_id) {
+        var $form = $('form[id="'+form_id+'"]');
+        var validate = jb_validation.validate($form);
+
+        if (!validate) {
+            return false;
+        }
+
+        var formData = new FormData($form[0]);
+        var url = $(dt).parent().parent().attr('action');
+
+        $.ajax({
+            'url': url,
+            'type':'post',
+            'data': formData,
+            'dataType': 'json',
+            'async': false,
+            'success': function(data) {
+                console.log(data);
+                if (data.status == 'success') {
+                    var alert_success = $form.find('.alert-success');
+                    var alert_warning = $form.find('.alert-warning');
+                    alert_success.html(data.message);
+                    alert_success.show();
+                    alert_warning.hide();
+                    $form.find('.form-group').hide();
+                    var product_update_url = "{{ 'products/default/update' | link }}/"+ data.id;
+                    setTimeout(function () {
+                        window.location.href = product_update_url;
+                    }, 4000);
+                }
+            },
+            'errors': function (request, status, error) {
+                console.log(request.responseText);
+            },
+            'cache': false,
+            'contentType': false,
+            'processData': false
+        });
+
+        return false;
+    }
 </script>
 {% endblock %}

@@ -1,0 +1,40 @@
+<form method="post" id="product-create" action="{{ 'products/category/create-product' | link }}">
+    <div class="alert alert-success" style="display: none;"></div>
+    <div class="alert alert-warning" style="display: none;"></div>
+
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>Title <span class="red">*</span></label>
+            <input type="text" name="Product[title]" class="form-control required"
+                   placeholder="Name of the product" value="{{ data.title }}" onchange="getSlug(this)">
+        </div>
+
+        <div class="form-group">
+            <label>Permalink <span class="red">*</span></label>
+            <input type="text" name="Product[slug]" class="form-control required"
+                   placeholder="Permalink url of detail product" value="{{ data.slug }}" id="permalink">
+        </div>
+
+        <div class="form-group">
+            <label>Status <span class="red">*</span></label>
+            <select name="Product[status]" class="form-control required">
+                {% set statuses = {'disabled':'Disabled', 'enabled':'Enabled'} %}
+                {% for status, sname in statuses %}
+                <option value="{{ status }}" {% if data.status == status %}selected="selected"{% endif %}>{{ sname }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control editor" name="Product[description]">{% if data.description %}{{ data.description }}{% endif %}</textarea>
+        </div>
+    </div>
+
+    <input type="hidden" name="Product[category_id]" value="{{ category_id }}">
+
+    <div class="form-group col-sm-12">
+        <input type="submit" name="Submit" value="Create" class="btn btn-success btn-submit" onclick="return saveAjax(this, 'product-create');">
+    </div>
+</form>
