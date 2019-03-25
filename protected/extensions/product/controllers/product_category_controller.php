@@ -283,6 +283,7 @@ class ProductCategoryController extends BaseController
                     $message = 'Your data has been successfully created.';
                     $success = true;
                     $id = $model->id;
+                    $_SESSION['Product']['id'] = $id;
                 } else {
                     $message = 'Failed to create new data.';
                     $success = false;
@@ -297,7 +298,7 @@ class ProductCategoryController extends BaseController
             [
                 'status' => ($success)? 'success' : 'failed',
                 'message' => $message,
-                'id' => $id
+                'id' => $_SESSION['Product']['id']
             ], 201);
     }
 }
