@@ -73,7 +73,7 @@
 .footer-logo{background-image:url(../images/logo_dark.png);background-size:130px 25px;width:130px;height:25px;margin-bottom:20px}
 .footer-content p{text-align:center;width:85%}
 .footer-socials{width:300px}
-.footer-socials a{width:40px;height:40px;line-height:42px;text-align:center;border-radius:40px;float:left;margin-left:5px;margin-right:5px}
+.footer-socials a{width:40px;height:40px;line-height:42px;text-align:center;border-radius:40px;float:left;margin-left:10px;margin-right:10px}
 .footer-strip{text-align:center;padding-top:20px;padding-bottom:50px}
 .header-icon-1,.header-icon-2{border-right:dashed 1px rgba(255,255,255,.1)}
 .header-icon-2,.header-icon-3{margin-top:-60px}
