@@ -7,7 +7,7 @@ use Prophecy\Exception\Exception;
 
 class PagesController extends BaseController
 {
-    
+
     public function __construct($app, $user)
     {
         parent::__construct($app, $user);
@@ -126,26 +126,127 @@ class PagesController extends BaseController
             return $this->notAllowedAction();
         }
 
-        if (isset($_POST['content']) && file_exists($_POST['path'])){
-            $update = file_put_contents($_POST['path'], $_POST['content']);
-            if ($update) {
-                $message = 'Data Anda telah berhasil diubah.';
-                $success = true;
-            } else {
-                $message = 'Failed to update the page.';
-                $success = false;
-            }
-        }
+        $params = $request->getParams();
 
         $tools = new \PanelAdmin\Components\AdminTools($this->_settings);
         $page_content = $tools->getPage($args['name']);
         $format = new \PanelAdmin\Components\Format();
-        $page_content['content'] = $format->HTML($page_content['content']);
+        //$full_content = $format->HTML($page_content['content']);
+        $full_content = $page_content['content'];
+        $old_content = $page_content['content'];
+        $page_content['content'] = $full_content;
+
+        if (isset($params['content'])) {
+            if (isset($params['Page'])) {
+                if (preg_match('/{% block pagetitle %}(.*?){% endblock %}/', $full_content, $match0) == 1) {
+                    $old_content = preg_replace(
+                        "/{% block pagetitle %}(.*?){% endblock %}/",
+                        '{% block pagetitle %}'.$params['Page']['title'].'{% endblock %}',
+                        $old_content);
+                }
+
+                if (preg_match('/{% block meta_keywords %}(.*?){% endblock %}/', $full_content, $match) == 1) {
+                    $old_content = preg_replace(
+                        "/{% block meta_keywords %}(.*?){% endblock %}/",
+                        '{% block meta_keywords %}'.$params['Page']['meta_keyword'].'{% endblock %}',
+                        $old_content);
+                }
+
+                if (preg_match('/{% block meta_description %}(.*?){% endblock %}/', $full_content, $match2) == 1) {
+                    if (!empty($params['Page']['meta_description'])) {
+                        $old_content = preg_replace(
+                            "/{% block meta_description %}(.*?){% endblock %}/",
+                            '{% block meta_description %}'.$params['Page']['meta_description'].'{% endblock %}',
+                            $old_content);
+                    }
+                }
+
+                if (preg_match('/{% block content %}(.*?){% endblock %}/', $full_content, $match3) == 1) {
+                    if (!empty($params['content'])) {
+                        $old_content = preg_replace(
+                            "/{% block content %}(.*?){% endblock %}/",
+                            '{% block content %}'.$params['content'].'{% endblock %}',
+                            $old_content);
+                    }
+                }
+
+                $model = \Model\PagesModel::model()->findByAttributes(['slug' => $params['page']]);
+                $is_new_record = false;
+                if (!$model instanceof \RedBeanPHP\OODBBean) {
+                    $model = new \Model\PagesModel();
+                    $model->created_at = date("Y-m-d H:i:s");
+                    $is_new_record = true;
+                }
+                $model->slug = $params['page'];
+                $model->title = $params['Page']['title'];
+                $model->meta_keywords = $params['Page']['meta_keyword'];
+                $model->meta_description = $params['Page']['meta_description'];
+                $model->content = $params['content'];
+                $model->updated_at = date("Y-m-d H:i:s");
+                if ($is_new_record) {
+                    $save = \Model\PagesModel::model()->save(@$model);
+                } else {
+                    $save = \Model\PagesModel::model()->update($model);
+                }
+
+                if ($save) {
+                    try {
+                        $update_content = file_put_contents($params['path'], $old_content);
+                    } catch (\Exception $e) {
+                        var_dump($e->getMessage()); exit;
+                    }
+
+                    $message = 'Data Anda telah berhasil diubah.';
+                    $success = true;
+                } else {
+                    $message = \Model\PagesModel::model()->getErrors(false);
+                    $success = false;
+                }
+            } else {
+                if (isset($_POST['content']) && file_exists($_POST['path'])){
+                    $update = file_put_contents($_POST['path'], $_POST['content']);
+                    if ($update) {
+                        $message = 'Data Anda telah berhasil diubah.';
+                        $success = true;
+                    } else {
+                        $message = 'Failed to update the page.';
+                        $success = false;
+                    }
+                }
+            }
+        }
+
+        $model = \Model\PagesModel::model()->findByAttributes(['slug' => $args['name']]);
+        $page_data = [];
+        if (isset($_GET['e'])) {
+            if ($model instanceof \RedBeanPHP\OODBBean) {
+                $page_content['content'] = $model->content;
+                $page_data['title'] = $model->title;
+                $page_data['meta_keywords'] = $model->meta_keywords;
+                $page_data['meta_description'] = $model->meta_description;
+            } else {
+                if (preg_match('/{% block content %}(.*?){% endblock %}/', $old_content, $match) == 1) {
+                    $page_content['content'] = $match[1];
+                }
+                if (preg_match('/{% block pagetitle %}(.*?){% endblock %}/', $old_content, $match2) == 1) {
+                    $page_data['title'] = $match2[1];
+                }
+                if (preg_match('/{% block meta_keywords %}(.*?){% endblock %}/', $old_content, $match4) == 1) {
+                    $page_data['meta_keywords'] = $match4[1];
+                }
+                if (preg_match('/{% block meta_description %}(.*?){% endblock %}/', $old_content, $match3) == 1) {
+                    $page_data['meta_description'] = $match3[1];
+                }
+            }
+        }
 
         return $this->_container->module->render($response, 'pages/update.html', [
             'data' => $page_content,
             'message' => ($message) ? $message : null,
-            'success' => $success
+            'success' => $success,
+            'params' => $params,
+            'model' => $model,
+            'page_data' => $page_data
         ]);
     }
 

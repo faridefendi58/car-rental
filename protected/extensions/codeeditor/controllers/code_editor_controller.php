@@ -45,7 +45,7 @@ class CodeEditorController extends BaseController
         $files = [];
         foreach ($themes as $name => $theme) {
             $path = $theme['path'];
-            $dir_contents = $this->getDirContents($path, '/\.(css|js)/');
+            $dir_contents = $this->getDirContents($path, '/\.(css|js|phtml)/');
             $dir_files = [];
             if (is_array($dir_contents) && count($dir_contents) > 0) {
                 foreach ($dir_contents as $dir_content) {

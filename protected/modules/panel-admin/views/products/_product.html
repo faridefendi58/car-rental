@@ -1,0 +1,36 @@
+{% set products = App.call.model("\\ExtensionsModel\\ProductModel", 'getItems', {'category_id':model.id}) %}
+<div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer table-responsive" role="grid">
+    <table id="dt_basic" class="table table-striped dataTable">
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>Title</th>
+            <th>Kategori</th>
+            <th>Status</th>
+            <th>&nbsp;</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i, data in products %}
+        <tr>
+            <td>{{ i + 1 }}</td>
+            <td>{{ data.title }}</td>
+            <td>{{ App.call.model("\\ExtensionsModel\\ProductCategoryModel", 'getItem', {'id':data.category_id}).title }}</td>
+            <td>{{ data.status }}</td>
+            <td>
+                <a href="{{ 'products/default/update' | link }}/{{ data.id }}">
+                    <i class="fa fa-pencil"></i>
+                </a>
+                <a href="{{ 'products/default/delete' | link }}/{{ data.id }}" onclick="return hapus(this);">
+                    <i class="fa fa-trash-o"></i>
+                </a>
+            </td>
+        </tr>
+        {% else %}
+        <tr class="no-data">
+            <td>No data founds</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
