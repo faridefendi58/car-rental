@@ -13,6 +13,17 @@ foreach (glob(__DIR__.'/../components/*.php') as $component) {
     }
 }
 
+$app->get('/product[/{category}[/{product}]]', function ($request, $response, $args) {
+    $pmodel = new \ExtensionsModel\ProductModel();
+    $model = \ExtensionsModel\ProductModel::model()->findByAttributes(['slug' => $args['product']]);
+    if ($model instanceof \RedBeanPHP\OODBBean) {
+
+        return $this->view->render($response, 'product_detail.phtml', [
+            'model' => $model
+        ]);
+    }
+});
+
 $app->group('/products', function () use ($user) {
     $this->group('/category', function() use ($user) {
         new Extensions\Controllers\ProductCategoryController($this, $user);
