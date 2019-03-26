@@ -18,8 +18,10 @@ $app->get('/product[/{category}[/{product}]]', function ($request, $response, $a
     $model = \ExtensionsModel\ProductModel::model()->findByAttributes(['slug' => $args['product']]);
     if ($model instanceof \RedBeanPHP\OODBBean) {
 
+        $cmodel = \ExtensionsModel\ProductCategoryModel::model()->findByAttributes(['slug' => $args['category']]);
         return $this->view->render($response, 'product_detail.phtml', [
-            'model' => $model
+            'model' => $model,
+            'cmodel' => $cmodel
         ]);
     }
 });

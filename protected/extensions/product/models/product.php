@@ -55,6 +55,15 @@ class ProductModel extends \Model\BaseModel
             '12H' => '12 Jam',
             '18H' => '18 Jam',
             '24H' => '24 Jam',
+            '2D' => '2 Hari',
+            '3D' => '3 Hari',
+            '4D' => '4 Hari',
+            '5D' => '5 Hari',
+            '6D' => '6 Hari',
+            '1W' => '1 Minggu',
+            '2W' => '2 Minggu',
+            '3W' => '3 Minggu',
+            '1M' => '1 Bulan',
             ];
     }
 
