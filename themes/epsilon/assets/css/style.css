@@ -70,7 +70,7 @@
 .icon-column i{display:block;font-size:40px;text-align:center;width:100px;height:100px;border-radius:100px;line-height:100px}
 .icon-column h4{text-align:center;padding-top:20px}
 .icon-column p{width:80%;text-align:center}
-.footer-logo{background-image:url(../images/logo_dark.png);background-size:130px 25px;width:130px;height:25px;margin-bottom:20px}
+.footer-logo{background-size:130px 25px;width:130px;height:25px;margin-bottom:20px}
 .footer-content p{text-align:center;width:85%}
 .footer-socials{width:300px}
 .footer-socials a{width:40px;height:40px;line-height:42px;text-align:center;border-radius:40px;float:left;margin-left:10px;margin-right:10px}
