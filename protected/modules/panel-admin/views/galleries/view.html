@@ -1,0 +1,131 @@
+{% extends "layout.html" %}
+{% block pagetitle %}
+Daftar Gallery - {{ App.params.site_name }}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ 'lib/DataTables/media/css/jquery.dataTables.min.css' | admin_asset_url }}">
+<div id="main_wrapper">
+    <div class="page_bar clearfix">
+        <div class="row">
+            <div class="col-sm-10">
+                <h1 class="page_title">Gallery</h1>
+                <p class="text-muted">Daftar semua gallery</p>
+            </div>
+            <div class="col-sm-2 text-right">
+
+            </div>
+        </div>
+    </div>
+    <div class="page_content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Gallery</div>
+                        <div class="panel-body">
+                            <div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer table-responsive" role="grid">
+                                <table id="dt_basic" class="table table-striped dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th>id</th>
+                                        <th>Code</th>
+                                        <th>Title</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set no = 1 %}
+                                    {% for i, gallery in galleries %}
+                                    <tr>
+                                        <td>{{ no }}</td>
+                                        <td>{{ gallery.code }}</td>
+                                        <td>{{ gallery.title }}</td>
+                                        <td>
+                                            <a href="{{ 'galleries/update' | link }}/{{ gallery.id }}">
+                                                <i class="fa fa-pencil"></i>
+                                            </a>
+                                            <a href="{{ 'galleries/delete' | link }}/{{ gallery.id }}" onclick="return hapus(this);">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% set no = no + 1 %}
+                                    {% else %}
+                                    <tr class="no-data">
+                                        <td>No data founds</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Tambah Data</div>
+                        <div class="panel-body">
+                            <form method="post" name="gallery-create">
+                                {% if message %}
+                                <div class="alert {% if success %}alert-success{% else %}alert-warning{% endif %}">{{ message }}</div>
+                                {% endif %}
+
+                                <div class="form-group">
+                                    <label>Title <span class="red">*</span></label>
+                                    <input type="text" name="Gallery[title]" class="form-control"
+                                           placeholder="Just name or gallery purpose" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control editor" name="Gallery[description]"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="submit" name="Submit" value="Create" class="btn btn-success btn-submit">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'partial/right_menu.html' %}
+{% endblock %}
+{% block endbodyjs %}
+<script src="{{ 'lib/DataTables/media/js/jquery.dataTables.min.js' | admin_asset_url }}"></script>
+<script src="{{ 'lib/DataTables/media/js/dataTables.bootstrap.js' | admin_asset_url }}"></script>
+<script type="text/javascript">
+    function hapus(data) {
+        if (confirm('Are you sure to delete ?')) {
+            var $this =  $(data);
+            var url = $this.attr('href');
+            $.ajax({
+                //'beforeSend': function() { Loading.show(); },
+                //'complete': function() { Loading.hide(); },
+                'url': url,
+                'type':'post',
+                'dataType': 'json',
+                'success': function(data) {
+                    if (data) {
+                        $this.parent().parent().remove();
+                    }
+                }
+            });
+        }
+        return false;
+    }
+
+    $(function(){
+        var success_message = "{{ message }}";
+        if (success_message && success_message.length > 0) {
+            setTimeout(function () {
+                window.location.href = "{{ 'galleries/view' | link }}";
+            }, 2000);
+        }
+    });
+</script>
+{% endblock %}
