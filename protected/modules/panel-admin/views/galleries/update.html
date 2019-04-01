@@ -1,0 +1,229 @@
+{% extends "layout.html" %}
+{% block pagetitle %}
+Ubah Gallery - {{ model.title }} - {{ App.params.site_name }}
+{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ 'css/bootstrap-fileupload.min.css' | admin_asset_url }}" />
+<div id="main_wrapper">
+    <div class="page_bar clearfix">
+        <div class="row">
+            <div class="col-sm-10">
+                <h1 class="page_title">Ubah Gallery</h1>
+                <p class="text-muted">Formulir ubah Gallery {{ model.title }}</p>
+            </div>
+            <div class="col-sm-2 text-right">
+                <a class="btn btn-default" href="{{ 'galleries/view' | link }}">Daftar Gallery</a>
+            </div>
+        </div>
+    </div>
+    <div class="page_content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    Kolom bertanda <span class="red">*</span> tidak boleh dikosongi
+                                </div>
+                                <div class="panel-body">
+                                    <form method="post" name="gallery-create">
+                                        {% if message %}
+                                        <div class="alert {% if success %}alert-success{% else %}alert-warning{% endif %}">{{ message }}</div>
+                                        {% endif %}
+
+                                        <div class="form-group">
+                                            <label>Title <span class="red">*</span></label>
+                                            <input type="text" name="Gallery[title]" class="form-control"
+                                                   placeholder="Just name or gallery purpose" value="{{ model.title }}" required>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Code <span class="red">*</span></label>
+                                            <input type="text" name="Gallery[code]" class="form-control"
+                                                   value="{{ model.code }}" readonly="readonly">
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control editor" name="Gallery[description]">{{ model.description }}</textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <input type="submit" name="Submit" value="Update" class="btn btn-success btn-submit">
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="clearfix mb30"></div>
+                        <div class="col-lg-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">Add More Images</div>
+                                <div class="panel-body">
+                                    <div class="alert" id="upload-alert" style="display: none;"></div>
+                                    <form class="form-bordered" id="image-form" action="{{ 'galleries/upload-images' | link }}">
+                                        <div class="form-group">
+                                            <label class="control-label">Images</label>
+                                            <div class="fileupload fileupload-new" data-provides="fileupload">
+                                                <div class="input-append">
+                                                    <div class="uneditable-input">
+                                                        <i class="glyphicon glyphicon-file fileupload-exists"></i>
+                                                        <span class="fileupload-preview"></span>
+                                                    </div>
+                                                    <span class="btn btn-default btn-file">
+											  <span class="fileupload-new">Select file</span>
+											  <span class="fileupload-exists">Change</span>
+											  <input type="file" name="GalleryImages[file_name]"/>
+											</span>
+                                                    <a href="#" class="btn btn-default fileupload-exists" data-dismiss="fileupload">Remove</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Image Alt</label>
+                                            <input type="text" name="GalleryImages[title]" class="form-control"/>
+                                            <span class="help-block">Type the title of the image file</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Url</label>
+                                            <input type="text" name="GalleryImages[url]" class="form-control"/>
+                                            <span class="help-block">Type the url link of the image if any</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Order</label>
+                                            {% set items_length = items | length %}
+                                            <input type="text" name="GalleryImages[order]" class="form-control" value="{{ items_length + 1 }}"/>
+                                            <span class="help-block">Type the order number of the image if neccesarry</span>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label class="control-label">Image Description</label>
+                                            <textarea name="GalleryImages[caption]" class="form-control"></textarea>
+                                            <span class="help-block">Type the short description of the image file</span>
+                                        </div>
+                                        <input type="hidden" name="GalleryImages[category_id]" value="{{ model.id }}">
+                                    </form>
+                                </div>
+                                <div class="panel-footer">
+                                    <div class="row">
+                                        <div class="col-sm-12">
+                                            <button class="btn btn-primary" id="submit-image-form">Submit</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            Images
+                        </div>
+                        <div class="panel-body">
+                            <div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer table-responsive" role="grid">
+                                <table id="dt_basic" class="table table-striped dataTable">
+                                    <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Caption</th>
+                                        <th>&nbsp;</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for i, item in items %}
+                                    <tr>
+                                        <td><img src="{{ item.image | link }}" style="max-height: 50px;"/><br/>{{ item.title }}</td>
+                                        <td>{{ item.caption }}</td>
+                                        <td>
+                                            <a href="{{ 'galleries/delete-image' | link }}/{{ item.id }}" attr-id="{{ item.id }}" onclick="return hapus(this);">
+                                                <i class="fa fa-trash-o"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include 'partial/right_menu.html' %}
+{% endblock %}
+{% block endbodyjs %}
+<script src="{{ 'js/bootstrap-fileupload.min.js' | admin_asset_url }}"></script>
+<script type="text/javascript" src="{{ 'lib/tinymce/tinymce.min.js' | admin_asset_url }}"></script>
+<script type="text/javascript">
+    $(function(){
+        var success_message = "{{ message }}";
+        if (success_message && success_message.length > 0) {
+            setTimeout(function () {
+                window.location.href = "{{ 'galleries/update' | link }}/{{ model.id }}";
+            }, 2000);
+        }
+
+        $("#submit-image-form").click(function(){
+            var formData = new FormData($('form[id="image-form"]')[0]);
+            $.ajax({
+                url: $('form[id="image-form"]').attr('action'),
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                async: false,
+                success: function (data) {
+                    var alert_area = $('#upload-alert');
+                    if (data.status == 'success') {
+                        alert_area.html(data.message);
+                        alert_area.addClass('alert-success');
+                        alert_area.removeClass('alert-warning');
+                        alert_area.show();
+                        setTimeout(function () {
+                            window.location.reload(true);
+                        }, 3000);
+                    } else {
+                        alert_area.html(data.message);
+                        alert_area.addClass('alert-warning');
+                        alert_area.removeClass('alert-success');
+                        alert_area.show();
+                    }
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+            return false;
+        });
+    });
+
+    function hapus(data) {
+        if (confirm('Are you sure to delete ?')) {
+            var $this =  $(data);
+            var url = $this.attr('href');
+            $.ajax({
+                'url': url,
+                'type':'post',
+                'data':{'id':$this.attr('attr-id')},
+                'dataType': 'json',
+                'success': function(data) {
+                    if (data) {
+                        $this.parent().parent().remove();
+                        setTimeout(function () {
+                            window.location.href = "{{ 'galleries/update' | link }}/{{ model.id }}";
+                        }, 2000);
+                    }
+                }
+            });
+        }
+        return false;
+    }
+</script>
+{% endblock %}

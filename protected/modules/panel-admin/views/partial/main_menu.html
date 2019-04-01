@@ -1,5 +1,6 @@
 <!-- side navigation -->
 {% if not App.user.isGuest() %}
+{% set exts = App.optionModel.getInstalledExtensions() %}
 <nav id="side_nav">
     <ul>
         <li>
@@ -20,6 +21,7 @@
                 </div>
             </div>
         </li>
+        {% if exts.blog %}
         <li>
             <a href="#">
                 <span class="ion-social-rss"></span>
@@ -35,6 +37,7 @@
                 </div>
             </div>
         </li>
+        {% endif %}
         <li>
             <a href="#">
                 <span class="ion-monitor"></span>
@@ -45,12 +48,20 @@
                     <h4 class="panel_heading panel_heading_first">Tampilan</h4>
                     <ul>
                         <li><a href="{{ 'themes/view' | alink }}"><span class="side_icon ion-ios7-folder-outline"></span> Tema</a></li>
+                        {% if exts.slide %}
                         <li><a href="{{ 'slides/view' | link }}"><span class="side_icon ion-ios7-folder-outline"></span> Slide Show</a></li>
+                        {% endif %}
+                        {% if exts.gallery %}
+                        <li><a href="{{ 'galleries/view' | link }}"><span class="side_icon ion-ios7-folder-outline"></span> Gallery</a></li>
+                        {% endif %}
+                        {% if exts.translation %}
                         <li><a href="{{ 'translations/view' | link }}"><span class="side_icon ion-ios7-folder-outline"></span> Terjemahan</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </div>
         </li>
+        {% if exts.product %}
         <li>
             <a href="#">
                 <span class="ion-briefcase"></span>
@@ -66,6 +77,7 @@
                 </div>
             </div>
         </li>
+        {% endif %}
         <li>
             <a href="#">
                 <span class="ion-settings"></span>

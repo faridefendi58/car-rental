@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block pagetitle %}
-Daftar Kategori Produk - {{ App.params.site_name }}
+Daftar Gallery - {{ App.params.site_name }}
 {% endblock %}
 
 {% block content %}
@@ -9,48 +9,48 @@ Daftar Kategori Produk - {{ App.params.site_name }}
     <div class="page_bar clearfix">
         <div class="row">
             <div class="col-sm-10">
-                <h1 class="page_title">Kategori Produk</h1>
-                <p class="text-muted">Daftar semua ketegori produk</p>
+                <h1 class="page_title">Gallery</h1>
+                <p class="text-muted">Daftar semua gallery</p>
             </div>
             <div class="col-sm-2 text-right">
-                <a class="btn btn-default" href="{{ 'products/category/create' | link }}">Buat Kategori Produk Baru</a>
+
             </div>
         </div>
     </div>
     <div class="page_content">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-lg-12">
+                <div class="col-lg-6">
                     <div class="panel panel-default">
-                        <div class="panel-heading">Kategori Produk</div>
+                        <div class="panel-heading">Gallery</div>
                         <div class="panel-body">
                             <div id="dt_basic_wrapper" class="dataTables_wrapper form-inline no-footer table-responsive" role="grid">
                                 <table id="dt_basic" class="table table-striped dataTable">
                                     <thead>
                                     <tr>
                                         <th>id</th>
+                                        <th>Code</th>
                                         <th>Title</th>
-                                        <th>Image</th>
                                         <th>&nbsp;</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {% for i, data in datas %}
+                                    {% set no = 1 %}
+                                    {% for i, gallery in galleries %}
                                     <tr>
-                                        <td>{{ i }}</td>
+                                        <td>{{ no }}</td>
+                                        <td>{{ gallery.code }}</td>
+                                        <td>{{ gallery.title }}</td>
                                         <td>
-                                            <a href="{{ 'products/category/update' | link }}/{{ data.id }}">{{ data.title }}</a>
-                                        </td>
-                                        <td><img src="{{ data.image | link }}" class="img-thumbnail" style="width: 100px;"/></td>
-                                        <td>
-                                            <a href="{{ 'products/category/update' | link }}/{{ data.id }}">
+                                            <a href="{{ 'galleries/update' | link }}/{{ gallery.id }}">
                                                 <i class="fa fa-pencil"></i>
                                             </a>
-                                            <a href="{{ 'products/category/delete' | link }}/{{ data.id }}" onclick="return hapus(this);">
+                                            <a href="{{ 'galleries/delete' | link }}/{{ gallery.id }}" onclick="return hapus(this);">
                                                 <i class="fa fa-trash-o"></i>
                                             </a>
                                         </td>
                                     </tr>
+                                    {% set no = no + 1 %}
                                     {% else %}
                                     <tr class="no-data">
                                         <td>No data founds</td>
@@ -62,9 +62,30 @@ Daftar Kategori Produk - {{ App.params.site_name }}
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="row">
-                        <div class="row">
+                <div class="col-lg-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">Tambah Data</div>
+                        <div class="panel-body">
+                            <form method="post" name="gallery-create">
+                                {% if message %}
+                                <div class="alert {% if success %}alert-success{% else %}alert-warning{% endif %}">{{ message }}</div>
+                                {% endif %}
+
+                                <div class="form-group">
+                                    <label>Title <span class="red">*</span></label>
+                                    <input type="text" name="Gallery[title]" class="form-control"
+                                           placeholder="Just name or gallery purpose" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Description</label>
+                                    <textarea class="form-control editor" name="Gallery[description]"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="submit" name="Submit" value="Create" class="btn btn-success btn-submit">
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
@@ -97,5 +118,14 @@ Daftar Kategori Produk - {{ App.params.site_name }}
         }
         return false;
     }
+
+    $(function(){
+        var success_message = "{{ message }}";
+        if (success_message && success_message.length > 0) {
+            setTimeout(function () {
+                window.location.href = "{{ 'galleries/view' | link }}";
+            }, 2000);
+        }
+    });
 </script>
 {% endblock %}
