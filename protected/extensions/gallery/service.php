@@ -33,6 +33,7 @@ class GalleryService
 
         $sql .= "CREATE TABLE IF NOT EXISTS `{tablePrefix}ext_gallery_category` (
           `id` int(11) NOT NULL AUTO_INCREMENT,
+          `code` varchar(64) DEFAULT NULL,
           `title` varchar(128) NOT NULL,
           `description` text,
           `configs` text,
