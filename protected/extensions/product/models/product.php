@@ -5,6 +5,9 @@ require_once __DIR__ . '/../../../models/base.php';
 
 class ProductModel extends \Model\BaseModel
 {
+    const STATUS_ENABLED = 'enabled';
+    const STATUS_DISABLED = 'disabled';
+
     public static function model($className=__CLASS__)
     {
         return parent::model($className);
@@ -90,5 +93,48 @@ class ProductModel extends \Model\BaseModel
         $rows = \Model\R::getAll( $sql, $params );
 
         return $rows;
+    }
+
+    public function getSitemaps($data = [])
+    {
+        $sql = "SELECT t.id, t.slug AS product_slug, c.slug AS category_slug, 
+        t.updated_at AS last_update  
+        FROM {tablePrefix}ext_product t
+        LEFT JOIN {tablePrefix}ext_product_category c ON c.id = t.category_id
+        WHERE t.status =:status";
+
+        $params = [ 'status' => self::STATUS_ENABLED ];
+
+        $sql .= " ORDER BY t.created_at ASC";
+
+        $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
+
+        $rows = \Model\R::getAll( $sql, $params );
+        $items = []; $check_items = []; $categories = [];
+        if (count($rows) > 0) {
+            $tool = new \Components\Tool();
+            $url_origin = $tool->url_origin();
+            foreach ($rows as $i => $row) {
+                if (!in_array($row['category_slug'], $categories)) {
+                    array_push($categories, $row['category_slug']);
+                    $items[] = [
+                        'loc' => $url_origin.'/'. $row['category_slug'],
+                        'lastmod' => date("c", strtotime($row['last_update'])),
+                        'priority' => 0.5
+                    ];
+                }
+
+                if (!in_array($row['product_slug'], $check_items)) {
+                    array_push($check_items, $row['product_slug']);
+                    $items[] = [
+                        'loc' => $url_origin.'/product/'. $row['category_slug'] .'/'. $row['product_slug'],
+                        'lastmod' => date("c", strtotime($row['last_update'])),
+                        'priority' => 0.5
+                    ];
+                }
+            }
+        }
+
+        return $items;
     }
 }

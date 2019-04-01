@@ -94,6 +94,12 @@ class Tool
             $results = array_merge($results, $posts);
         }
 
+        if (array_key_exists("product", $exts)) {
+            $pmodel = new \ExtensionsModel\ProductModel();
+            $products = $pmodel->getSitemaps();
+            $results = array_merge($results, $products);
+        }
+
         return $results;
     }
 

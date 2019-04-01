@@ -38,7 +38,9 @@ Daftar Kategori Produk - {{ App.params.site_name }}
                                     {% for i, data in datas %}
                                     <tr>
                                         <td>{{ i }}</td>
-                                        <td>{{ data.title }}</td>
+                                        <td>
+                                            <a href="{{ 'products/category/update' | link }}/{{ data.id }}">{{ data.title }}</a>
+                                        </td>
                                         <td><img src="{{ data.image | link }}" class="img-thumbnail" style="width: 100px;"/></td>
                                         <td>
                                             <a href="{{ 'products/category/update' | link }}/{{ data.id }}">
