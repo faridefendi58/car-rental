@@ -161,12 +161,24 @@ class PagesController extends BaseController
                     }
                 }
 
-                if (preg_match('/{% block content %}(.*?){% endblock %}/', $full_content, $match3) == 1) {
+                /*if (preg_match('/{% block content %}(.*?){% endblock %}/', $full_content, $match3) == 1) {
                     if (!empty($params['content'])) {
                         $old_content = preg_replace(
                             "/{% block content %}(.*?){% endblock %}/",
                             '{% block content %}'.$params['content'].'{% endblock %}',
                             $old_content);
+                    }
+                }*/
+                if (preg_match_all('/<content>(.*?)<\/content>/s', $full_content, $match3) == 1) {
+                    if (!empty($params['content'])) {
+                        /*$old_content = preg_replace(
+                            "/<content>(.*?)<\/content>/s",
+                            '<content>'.$params['content'].'</content>',
+                            $old_content);*/
+                        $_SESSION['Params_Content'] = "<content>". html_entity_decode($params['content']) ."</content>";
+                        $old_content = preg_replace_callback("/<content>(.*?)<\/content>/s", function($s) {
+                            return $_SESSION['Params_Content'];
+                        }, $old_content);
                     }
                 }
 
@@ -224,9 +236,15 @@ class PagesController extends BaseController
                 $page_data['title'] = $model->title;
                 $page_data['meta_keywords'] = $model->meta_keywords;
                 $page_data['meta_description'] = $model->meta_description;
+                if (preg_match_all('/<content>(.*?)<\/content>/s', $model->content, $match) == 1) {
+                    $page_content['main_content'] = $match[1];
+                }
             } else {
-                if (preg_match('/{% block content %}(.*?){% endblock %}/', $old_content, $match) == 1) {
+                /*if (preg_match_all('/{% block content %}(.*?){% endblock %}/', $old_content, $match) == 1) {
                     $page_content['content'] = $match[1];
+                }*/
+                if (preg_match_all('/<content>(.*?)<\/content>/s', $old_content, $match) == 1) {
+                    $page_content['content'] = html_entity_decode($match[1][0]);
                 }
                 if (preg_match('/{% block pagetitle %}(.*?){% endblock %}/', $old_content, $match2) == 1) {
                     $page_data['title'] = $match2[1];

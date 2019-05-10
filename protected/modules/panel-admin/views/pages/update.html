@@ -59,7 +59,7 @@ Ubah - {{ data.page }} - {{ App.name }}
 								{% endif %}
 								<div class="form-group">
 									<label>Page Content</label>
-									<textarea id="page-content" style="height: 350px; width: 100%;" name="content" class="editor summernote">{{ data.content  }}</textarea>
+									<textarea id="page-content" style="height: 350px; width: 100%;" name="content" class="editor summernote">{{ data.content }}</textarea>
 								</div>
 								<div class="form-group">
 									<input type="submit" name="Submit" value="Update Content" class="btn btn-success btn-submit">
@@ -81,8 +81,8 @@ Ubah - {{ data.page }} - {{ App.name }}
 {% endif %}
 <!-- include summernote css/js -->
 {% if params.e and params.e == 'summernote' %}
-<link href="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.css" rel="stylesheet">
-<script src="http://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote.js"></script>
+<link href="{{ 'css/summernote.css' | admin_asset_url }}" rel="stylesheet">
+<script src="{{ 'js/summernote.js' | admin_asset_url }}"></script>
 {% endif %}
 <script type="text/javascript">
     $(function(){
@@ -115,9 +115,9 @@ Ubah - {{ data.page }} - {{ App.name }}
                 tabfocus_elements: 'major-publishing-actions',
                 media_strict: false,
                 height: 400,
-                plugins: 'code image imagetools paste codesample',
+                plugins: 'code image imagetools paste codesample link',
                 menubar: false,
-                toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pastetext image code codesample',
+                toolbar: 'undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | pastetext image code codesample link',
                 codesample_languages: [
                     {text: 'HTML/XML', value: 'markup'},
                     {text: 'JavaScript', value: 'javascript'},
@@ -159,7 +159,8 @@ Ubah - {{ data.page }} - {{ App.name }}
                     formData.append('file', blobInfo.blob(), blobInfo.filename());
 
                     xhr.send(formData);
-                }
+                },
+				content_css:"{{ 'css/style.min.css' | asset_url }},{{ 'css/bootstrap-grid.min.css' | asset_url }},{{ 'css/framework.min.css' | asset_url }},{{ 'css/skin-light.min.css' | asset_url }}"
             });
         }
 
