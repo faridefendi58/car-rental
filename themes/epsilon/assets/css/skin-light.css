@@ -348,3 +348,6 @@ splash-content h4{color:#fff}
 .btn-xs,.btn-group-xs>.btn{padding:1px 5px;font-size:12px;line-height:1.5;border-radius:3px}
 .btn-block{display:block;width:100%}
 .btn-block+.btn-block{margin-top:5px}
+.staff-slider img{width: auto !important;}
+.center-cropped {width: 100px;height: 100px;background-position: center center;background-repeat: no-repeat;overflow: hidden;}
+.center-cropped img {min-height: 100%;min-width: 100%;-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";filter: alpha(opacity=0);opacity: 0;}
