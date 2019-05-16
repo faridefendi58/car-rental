@@ -53,6 +53,10 @@ Landing Pages - {{ App.name }}
                                             </a>
                                             {% endif %}
 
+                                            <a href="{{ 'pages/update' | alink }}/{{ page.slug }}?e=tinymce" title="Ubah Dengan Tinymce">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+
                                             <a href="{{ 'pages/update' | alink }}/{{ page.slug }}?e=summernote" title="Ubah Halaman">
                                                 <i class="fa fa-pencil"></i>
                                             </a>

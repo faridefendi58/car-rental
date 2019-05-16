@@ -86,6 +86,8 @@ class ProductDefaultController extends BaseController
             $model->category_id = $_POST['Product']['category_id'];
             $model->status = $_POST['Product']['status'];
             $model->description = $_POST['Product']['description'];
+            $model->description2 = $_POST['Product']['description2'];
+            $model->description3 = $_POST['Product']['description3'];
             $model->created_at = date('Y-m-d H:i:s');
             $model->updated_at = date('Y-m-d H:i:s');
             if (count($errors) == 0) {
@@ -148,6 +150,8 @@ class ProductDefaultController extends BaseController
             $model->category_id = $_POST['Product']['category_id'];
             $model->status = $_POST['Product']['status'];
             $model->description = $_POST['Product']['description'];
+            $model->description2 = $_POST['Product']['description2'];
+            $model->description3 = $_POST['Product']['description3'];
             $model->updated_at = date('Y-m-d H:i:s');
             if (count($errors) == 0) {
                 $update = \ExtensionsModel\ProductModel::model()->update($model);

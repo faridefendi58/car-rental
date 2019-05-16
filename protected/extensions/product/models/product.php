@@ -86,7 +86,15 @@ class ProductModel extends \Model\BaseModel
             $params['category_id'] = $data['category_id'];
         }
 
+        if (isset($data['exceptions'])) {
+            $sql .= ' AND i.id NOT IN ('. $data['exceptions'].')';
+        }
+
         $sql .= " GROUP BY i.id ORDER BY i.id ASC";
+
+        if (isset($data['limit'])) {
+            $sql .= ' LIMIT '. $data['limit'];
+        }
 
         $sql = str_replace(['{tablePrefix}'], [$this->_tbl_prefix], $sql);
 

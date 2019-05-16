@@ -63,6 +63,16 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
                                 </div>
 
                                 <div class="form-group">
+                                    <label>Description 2</label>
+                                    <textarea class="form-control editor" name="Product[description2]">{% if model.description2 %}{{ model.description2 }}{% endif %}</textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label>Description 3</label>
+                                    <textarea class="form-control editor" name="Product[description3]">{% if model.description3 %}{{ model.description3 }}{% endif %}</textarea>
+                                </div>
+
+                                <div class="form-group">
                                     <input type="submit" name="Submit" value="Update" class="btn btn-success btn-submit">
                                 </div>
                             </form>
@@ -188,6 +198,8 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
 {% block endbodyjs %}
 <script src="{{ 'js/bootstrap-fileupload.min.js' | admin_asset_url }}"></script>
 <script type="text/javascript" src="{{ 'lib/tinymce/tinymce.min.js' | admin_asset_url }}"></script>
+<link href="{{ 'css/summernote.css' | admin_asset_url }}" rel="stylesheet">
+<script src="{{ 'js/summernote.js' | admin_asset_url }}"></script>
 <script type="text/javascript">
     $(function(){
         var success_message = "{{ message }}";
@@ -233,6 +245,8 @@ Ubah Produk - {{ model.title }} - {{ App.params.site_name }}
             e.stopImmediatePropagation();
             return false;
         });
+
+        $('.editor').summernote();
     });
 
     function deleteImage(data) {
