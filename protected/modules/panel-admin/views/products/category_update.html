@@ -136,7 +136,7 @@ Ubah Kategori Produk - {{ model.title }} - {{ App.params.site_name }}
                     alert_success.show();
                     alert_warning.hide();
                     $form.find('.form-group').hide();
-                    if (typeof data.id !== 'undefined') {
+                    if (typeof data.id !== 'undefined' || data.id !== null || data.id !== 'null') {
                         var product_update_url = "{{ 'products/default/update' | link }}/"+ data.id;
                     } else {
                         var product_update_url = window.location.href;
