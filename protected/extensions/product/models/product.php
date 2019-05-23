@@ -55,6 +55,7 @@ class ProductModel extends \Model\BaseModel
     {
         return [
             '6H' => '6 Jam',
+            '10H' => '10 Jam',
             '12H' => '12 Jam',
             '18H' => '18 Jam',
             '24H' => '24 Jam',
@@ -84,6 +85,11 @@ class ProductModel extends \Model\BaseModel
         if (isset($data['category_id'])) {
             $sql .= ' AND i.category_id =:category_id';
             $params['category_id'] = $data['category_id'];
+        }
+
+        if (isset($data['status'])) {
+            $sql .= ' AND i.status =:status';
+            $params['status'] = $data['status'];
         }
 
         if (isset($data['exceptions'])) {
